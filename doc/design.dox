@@ -1,0 +1,81 @@
+/*!
+
+\page secDesign Software design
+
+\section secArch Architecture subsystems view
+
+A CVM device has several *subsystems* (software API of hardware):
+- Finite State Machine
+  - state_t FSM_EventHandler(const state_t state, const event_t event);
+  - void    FSM_FlushEnexpectedEvents(const bool flush);
+  - void    FSM_AddState(const state_t state, const state_funcs_t *funcs);
+  - void    FSM_AddTransition(const transition_t *transition);
+  - void    FSM_AddEvent(const event_t event);
+  - event_t FSM_GetEvent(void);
+  - event_t FSM_WaitForEvent(void);
+  - event_t FSM_PeekForEvent(void);
+  - bool    FSM_NoEvents(void);
+  - uint8_t FSM_NofEvents(void);
+
+- Display
+  - void DSPinitialise(void);
+  - void DSPclear(void);
+  - void DSPclearLine(int row);
+  - void DSPshowDisplay(void);
+  - void DSPshow(const char text[], int row);
+  - void DSPshowDelete(const char text[], int row);
+  - void DSPdebugSystemInfo(const char text[]);
+  - void DSPsimulationSystemInfo(const char text[]);
+  - void DSPshowSystemError(const char text[]);
+
+- Keyboard
+  - void KYBinitialise(void);
+  - void KYBclear(void);
+  - char KYBgetchar(void);
+  - int KYBgetint(int ifWrongValue);
+  - double KYBgetdouble(double ifWrongValue);
+
+- TUI *Textual User Interface* (terminal user interface), 
+  uses the Display and Keyboard API
+  - void TUIinitialise(void);
+  - int TUIsimulationSystemInputYN(const char questionText[]);
+  - char TUIsimulationSystemInputChar(const char text[], const char chrs[]);
+  - int TUIsimulationSystemInputInteger(const char text[], int min, int max);
+
+- FSM Initialisation and exit code
+
+  - void S_Init_onEntry(void);
+  - void S_Exit_onEntry(void);
+
+- FSM state machine for controlling the Simple example, is executed by main()
+
+  - void    FSM_AddEvent(const event_t event);
+  - event_t FSM_GetEvent(void);
+  - event_t FSM_WaitForEvent(void);
+
+The arrows are code dependency relations (uses relations).
+In C code these are the \#include dependencies.
+
+\section secArchitecture Architecture view
+
+![](../../uml/out/TurnstileFSM_architecture/TurnstileFSM_architecture.png)
+
+\section secState State machine view
+
+\verbatim event [condition] / action() 
+\endverbatim
+
+- if an event occurs and the condition is satisfied, 
+  then the action will be executed and the state transition will occur.
+- event names are in uppercase, prefixed by **E_**.
+- the action is the name of one or more (short) C functions without parameters 
+  or only the important ones, prefixed by the abbreviated name of the related 
+  subsystem.
+  
+- all the names in the diagrams should be used in the C code.
+
+![](../../uml/out/TurnstileFSM_statechart/TurnstileFSM_statechart.png)
+
+A state chart is not a flowdiagram!
+
+*/

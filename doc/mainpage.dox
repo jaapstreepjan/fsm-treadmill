@@ -1,0 +1,21 @@
+/*!
+
+\mainpage Compile and execute the application
+
+\section sec1 How to compile
+
+The application is developed using QtCreator in a C project.
+
+Use the C11 compiler option in the CVM-1.pro file:
+
+\verbatim CONFIG += c11 \endverbatim
+
+Press the green button down left to the editor for compiling the code project.
+
+\section sec2 User manual
+
+Start the application as follows: ...
+
+\todo Write a complete user manual.
+
+*/

@@ -1,0 +1,9 @@
+@startuml architecture-0.png
+!include ColaVendingMachine-layer.puml
+@enduml
+@startuml architecture-1.png
+!include ColaVendingMachine-layer-simulation.puml
+@enduml
+@startuml fsm-0.png
+!include ColaVendingMachine-fsm.puml
+@enduml

@@ -1,0 +1,18 @@
+/*!
+
+\page pImpl Software implementation
+
+\section secImplGuidelines Guidelines
+
+Guidelines for managing complexity and improving readability:
+
+- implement every subsystem in a separate C module (software component).
+- a C module consist of at least one header .h file and a related implementation .c file.
+- naming convention: use the name of the subsystem for the name of the C module.
+- the names of the device API functions should be prefixed by an abbreviation 
+  of the device name.
+- the Hardware IO in the *HAL* layer is not implemented. IO is simulated.
+- implement the [Display Simulation] and [Keyboard Simulation] 
+  in the modules [Display] and [Keyboard].
+
+*/
