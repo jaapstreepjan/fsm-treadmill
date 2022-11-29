@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css" height="433px" preserveAspectRatio="none" style="width:779px;height:433px;background:#FFFFFF;" version="1.1" viewBox="0 0 779 433" width="779px" zoomAndPan="magnify"><defs/><g><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="252" x="253.5" y="22.9951">Layered Architecture Treadmill</text><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="120" x="319.5" y="39.292">C. van Dreumel</text><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="121" x="319" y="55.5889">J.J. Groenendijk</text><!--MD5=[9681dc6e01e10c6b4fe06895ae94f592]
+cluster UI--><g id="cluster_UI"><path d="M19.5,201.8906 L209.5,201.8906 A12.5,12.5 0 0 1 222,214.3906 L222,223.1875 L7,223.1875 L7,214.3906 A12.5,12.5 0 0 1 19.5,201.8906 " fill="#F1F1F1" style="stroke:#F1F1F1;stroke-width:1.0;"/><rect fill="none" height="101" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:0.5;" width="215" x="7" y="201.8906"/><line style="stroke:#181818;stroke-width:0.5;" x1="7" x2="222" y1="223.1875" y2="223.1875"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="144" x="42.5" y="218.8857">User Interface Layer</text></g><!--MD5=[27a824e6415478761db02626263a89ba]
+cluster SCL--><g id="cluster_SCL"><path d="M263.5,76.8906 L409.5,76.8906 A12.5,12.5 0 0 1 422,89.3906 L422,98.1875 L251,98.1875 L251,89.3906 A12.5,12.5 0 0 1 263.5,76.8906 " fill="#F1F1F1" style="stroke:#F1F1F1;stroke-width:1.0;"/><rect fill="none" height="101" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:0.5;" width="171" x="251" y="76.8906"/><line style="stroke:#181818;stroke-width:0.5;" x1="251" x2="422" y1="98.1875" y2="98.1875"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="155" x="259" y="93.8857">System Control Layer</text></g><!--MD5=[3acab886ff7c6253e77e5894d15c1479]
+cluster SL--><g id="cluster_SL"><path d="M258.5,201.8906 L753.5,201.8906 A12.5,12.5 0 0 1 766,214.3906 L766,223.1875 L246,223.1875 L246,214.3906 A12.5,12.5 0 0 1 258.5,201.8906 " fill="#F1F1F1" style="stroke:#F1F1F1;stroke-width:1.0;"/><rect fill="none" height="101" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:0.5;" width="520" x="246" y="201.8906"/><line style="stroke:#181818;stroke-width:0.5;" x1="246" x2="766" y1="223.1875" y2="223.1875"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="129" x="441.5" y="218.8857">Subsystems Layer</text></g><!--MD5=[b2138d38fd2f889926cdbabc36041698]
+cluster HAL--><g id="cluster_HAL"><path d="M241.5,326.8906 L431.5,326.8906 A12.5,12.5 0 0 1 444,339.3906 L444,348.1875 L229,348.1875 L229,339.3906 A12.5,12.5 0 0 1 241.5,326.8906 " fill="#F1F1F1" style="stroke:#F1F1F1;stroke-width:1.0;"/><rect fill="none" height="101" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:0.5;" width="215" x="229" y="326.8906"/><line style="stroke:#181818;stroke-width:0.5;" x1="229" x2="444" y1="348.1875" y2="348.1875"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="199" x="237" y="343.8857">Hardware Abstraction Layer</text></g><g id="UI.Screen"><rect fill="#F1F1F1" height="50" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:0.5;" width="70" x="136" y="236.8906"/><line style="stroke:#181818;stroke-width:0.5;" x1="136" x2="206" y1="263.1875" y2="263.1875"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="50" x="146" y="254.8857">Screen</text></g><g id="UI.Buttons"><rect fill="#F1F1F1" height="50" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:0.5;" width="77" x="23.5" y="236.8906"/><line style="stroke:#181818;stroke-width:0.5;" x1="23.5" x2="100.5" y1="263.1875" y2="263.1875"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="57" x="33.5" y="254.8857">Buttons</text></g><g id="SCL.FSM"><rect fill="#F1F1F1" height="50" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:0.5;" width="50" x="311" y="111.8906"/><line style="stroke:#181818;stroke-width:0.5;" x1="311" x2="361" y1="138.1875" y2="138.1875"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="29" x="321.5" y="129.8857">FSM</text></g><g id="SL.SL_BSM"><rect fill="#F1F1F1" height="50" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:0.5;" width="153" x="596.5" y="236.8906"/><line style="stroke:#181818;stroke-width:0.5;" x1="596.5" x2="749.5" y1="263.1875" y2="263.1875"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="133" x="606.5" y="254.8857">Band speed motor</text></g><g id="SL.SL_IM"><rect fill="#F1F1F1" height="50" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:0.5;" width="116" x="445" y="236.8906"/><line style="stroke:#181818;stroke-width:0.5;" x1="445" x2="561" y1="263.1875" y2="263.1875"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="96" x="455" y="254.8857">Incline motor</text></g><g id="SL.SL_EB"><rect fill="#F1F1F1" height="50" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:0.5;" width="147" x="262.5" y="236.8906"/><line style="stroke:#181818;stroke-width:0.5;" x1="262.5" x2="409.5" y1="263.1875" y2="263.1875"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="127" x="272.5" y="254.8857">Emergency Brake</text></g><g id="HAL.HWIO"><rect fill="#F1F1F1" height="50" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:0.5;" width="106" x="283" y="361.8906"/><line style="stroke:#181818;stroke-width:0.5;" x1="283" x2="389" y1="388.1875" y2="388.1875"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="86" x="293" y="379.8857">Hardware IO</text></g><!--MD5=[9ca6785660fd54175b5b86fb038cc7f4]
+link FSM to SL_BSM--><g id="link_FSM_SL_BSM"><path d="M361.169,140.4066 C406.467,145.6376 503.988,160.1336 579,193.8906 C601.239,203.8986 623.575,219.5306 640.891,233.1786 " fill="none" id="FSM-to-SL_BSM" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="#181818" points="645.182,236.6016,640.6397,227.8628,641.2729,233.4841,635.6516,234.1173,645.182,236.6016" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[ee17465f24c49379b0ed8c278761d40d]
+link FSM to SL_IM--><g id="link_FSM_SL_IM"><path d="M361.075,151.7676 C379.781,162.4866 405.677,178.1106 427,193.8906 C443.284,205.9416 460.299,220.7106 474.09,233.3116 " fill="none" id="FSM-to-SL_IM" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="#181818" points="477.892,236.8046,473.9715,227.7697,474.2103,233.4215,468.5585,233.6604,477.892,236.8046" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[341539115c67dfb7aacbe382135f1c53]
+link FSM to SL_EB--><g id="link_FSM_SL_EB"><path d="M336,161.8986 C336,181.7486 336,210.0266 336,231.2806 " fill="none" id="FSM-to-SL_EB" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="#181818" points="336,236.5236,340,227.5236,336,231.5236,332,227.5236,336,236.5236" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[96bbd2dac9d3303a6ef52015f5e9bd9a]
+link FSM to Screen--><g id="link_FSM_Screen"><path d="M310.796,151.9956 C292.319,162.7086 266.916,178.2246 246,193.8906 C229.905,205.9456 213.112,220.7146 199.507,233.3156 " fill="none" id="FSM-to-Screen" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="#181818" points="195.757,236.8086,205.0686,233.6003,199.4153,233.4003,199.6153,227.747,195.757,236.8086" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[1d0e9a937a268efdea0819ae145efeff]
+link FSM to Buttons--><g id="link_FSM_Buttons"><path d="M310.987,139.4606 C268.502,143.1376 180.84,155.1886 119,193.8906 C103.397,203.6556 89.8506,219.0786 79.8835,232.6656 " fill="none" id="FSM-to-Buttons" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="#181818" points="76.9069,236.8156,85.4029,231.8339,79.8212,232.7528,78.9023,227.171,76.9069,236.8156" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[894197e3ee656916eed7af009f4599b3]
+link SL_BSM to HWIO--><g id="link_SL_BSM_HWIO"><path d="M629.737,286.9596 C614.035,295.1636 595.978,303.9966 579,310.8906 C517.304,335.9446 443.961,357.5095 394.108,371.0005 " fill="none" id="SL_BSM-to-HWIO" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="#181818" points="389.057,372.3617,398.7879,373.8814,393.8847,371.0603,396.7057,366.1571,389.057,372.3617" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[cbd2150505fff59efc6b55dd6703a1ee]
+link SL_IM to HWIO--><g id="link_SL_IM_HWIO"><path d="M470.404,286.8986 C442.448,307.4886 402.182,337.1456 373.018,358.6258 " fill="none" id="SL_IM-to-HWIO" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="#181818" points="368.798,361.7337,378.417,359.6185,372.8243,358.7691,373.6736,353.1764,368.798,361.7337" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[80b4651a08c77399e552560f660c306f]
+link SL_EB to HWIO--><g id="link_SL_EB_HWIO"><path d="M336,286.8986 C336,306.7486 336,335.0266 336,356.2805 " fill="none" id="SL_EB-to-HWIO" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="#181818" points="336,361.5232,340,352.5232,336,356.5232,332,352.5232,336,361.5232" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[db0c4b6ecc3a9a850a14cef57bfec8dd]
+link Screen to HWIO--><g id="link_Screen_HWIO"><path d="M203.205,286.8986 C230.827,307.4886 270.611,337.1456 299.425,358.6258 " fill="none" id="Screen-to-HWIO" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="#181818" points="303.594,361.7337,298.7692,353.1476,299.5853,358.7453,293.9877,359.5615,303.594,361.7337" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[62fe88fb0d3708bf855b23ec4ee5fb7a]
+link Buttons to HWIO--><g id="link_Buttons_HWIO"><path d="M86.6058,287.0296 C96.144,295.4326 107.524,304.3756 119,310.8906 C169.502,339.5606 232.805,359.8894 277.981,372.0851 " fill="none" id="Buttons-to-HWIO" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="#181818" points="282.846,373.3859,275.1845,367.1971,278.0157,372.0945,273.1182,374.9256,282.846,373.3859" style="stroke:#181818;stroke-width:1.0;"/></g><!--MD5=[4a695df5600b9b51e0004d6045472cad]
+@startuml
+title Layered Architecture Treadmill\nC. van Dreumel\nJ.J. Groenendijk
+
+state "User Interface Layer" as UI {
+  state Screen
+  state Buttons
+}
+
+state "System Control Layer" as SCL {
+  state FSM
+}
+
+state "Subsystems Layer" as SL {
+  state "Band speed motor" as SL_BSM
+  state "Incline motor" as SL_IM
+  state "Emergency Brake" as SL_EB
+}
+
+state "Hardware Abstraction Layer" as HAL {
+  state "Hardware IO" as HWIO
+}
+
+FSM - -> SL_BSM
+FSM - -> SL_IM
+FSM - -> SL_EB
+FSM - -> Screen
+FSM - -> Buttons
+
+SL_BSM - -> HWIO
+SL_IM - -> HWIO
+SL_EB - -> HWIO
+
+Screen - -> HWIO
+Buttons - -> HWIO
+@enduml
+
+PlantUML version 1.2022.14beta4(Unknown compile time)
+(GPL source distribution)
+Java Runtime: Java(TM) SE Runtime Environment
+JVM: Java HotSpot(TM) 64-Bit Server VM
+Default Encoding: UTF-8
+Language: en
+Country: US
+--></g></svg>
