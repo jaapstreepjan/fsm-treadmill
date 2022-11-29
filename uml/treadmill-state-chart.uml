@@ -1,0 +1,47 @@
+@startuml
+
+title Treadmill State Chart\nC. van Dreumel\nJ.J. Groenendijk
+
+[*] --> init
+
+init --> standby
+
+standby --> default
+default --> standby
+
+standby --> diagnostics : Enter diagnostics
+diagnostics --> standby : Exit diagnostics
+
+default --> alterConfig : Change tilt or speed
+alterConfig --> default : Change complete
+default --> emergency : Emergency sensor triggered
+emergency --> default : Alarm cleared
+default --> pause : Pause button pressed
+pause --> default : Resume button
+
+init : Initialize sensors and motors
+
+emergency : Triggered by emergency sensor
+emergency : Halt all motors
+emergency : Brakes applied
+emergency : Waiting for signal that emergency is over
+
+alterConfig : Alter speed or tilt of treadmill
+alterConfig : Block any further changes untill alteration is complete
+
+default : Apply brake to degree of tilt
+default : Apply constant power to speed motor
+
+pause : Apply brake to degree of tilt
+pause : Treadmill speed is zero.
+pause : Keep running session data in memory
+pause : Wait for resume input
+
+standby : Wait for user input
+standby : Start speed 0.8 km/h
+standby : Start tilt at 0%
+
+diagnostics : Servicing mode
+diagnostics : Allow part replacement without triggering alarms
+
+@enduml
