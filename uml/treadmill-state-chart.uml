@@ -2,24 +2,27 @@
 
 title Treadmill State Chart\nC. van Dreumel\nJ.J. Groenendijk
 
-[*] --> init
+[*] --> init : Turn on machine\nE_INIT
 
-init --> standby
+init --> standby : Start machine\nE_TREADMILL
 
-standby --> default
-default --> standby
+standby --> default : Start running\nE_RUNNING_START
+default --> standby : Stop running\nE_RUNNING_STOP
 
-standby --> diagnostics : Enter diagnostics
-diagnostics --> standby : Exit diagnostics
+standby --> diagnostics : Enter diagnostics\nE_DIAGNOSTICS_START
+diagnostics --> standby : Exit diagnostics\nE_DIAGNOSTICS_STOP
 
-default --> alterConfig : Change tilt or speed
-alterConfig --> default : Change complete
-default --> emergency : Emergency sensor triggered
-emergency --> default : Alarm cleared
-default --> pause : Pause button pressed
-pause --> default : Resume button
+default --> alterConfig : Change tilt or speed\nE_CONFIG_CHANGE
+alterConfig --> default : Change complete\nE_CONFIG_DONE
+default --> emergency : Emergency sensor triggered\nE_EMERGENCY_START
+emergency --> default : Alarm cleared\nE_EMERGENCY_STOP
+default --> pause : Pause button pressed\nE_PAUSE
+pause --> default : Resume button\nE_RESUME
+alterConfig --> emergency : Emergency sensor triggered\nE_EMERGENCY_START
+emergency --> alterConfig : Alarm cleared\nE_EMERGENCY_STOP
 
-init : Initialize sensors and motors
+
+init : Sensors and motors\nInitialize motors
 
 emergency : Triggered by emergency sensor
 emergency : Halt all motors
@@ -31,6 +34,7 @@ alterConfig : Block any further changes untill alteration is complete
 
 default : Apply brake to degree of tilt
 default : Apply constant power to speed motor
+default : Changes to tilt and speed are allowed
 
 pause : Apply brake to degree of tilt
 pause : Treadmill speed is zero.

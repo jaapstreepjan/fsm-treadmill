@@ -24,5 +24,10 @@ qwerty
 ### Deadline
 Uiterlijk 5 Januari 2022 Programma opleveren en waarna de assesments worden ingepland
 
+## State Chart
+Om de opdracht eenvoudig te houden, beperken we ons apparaat tot 7 states.
+States zijn beschreven in [treadmill-state-chart.uml](/uml/treadmill-state-chart.uml)
+![treadmill-state-chart](/uml/treadmill-state-chart.svg)
+
 ## License
 MIT
