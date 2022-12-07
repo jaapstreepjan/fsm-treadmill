@@ -12,6 +12,10 @@
  *
  */
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5bf7739d411b7811a13d5a52208f4b4f2233dfcb
 #include <stdio.h>
 #include <unistd.h>
 
