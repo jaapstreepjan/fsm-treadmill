@@ -7,7 +7,7 @@ Creating a finite state machine based on a treadmill
 * J.J. Groenendijk
 
 ## Goals
-qwerty
+As student embedded systems engineers, understanding the concept of finite state machines is important because they provide a conceptual framework for modeling and designing the behavior of digital systems. Finite state machines are used to design and implement the control logic of many different types of systems, including everything from simple home appliances to complex industrial control systems. By understanding the principles of finite state machines, we can develop more effective and efficient control systems for a wide range of applications. Additionally, understanding finite state machines can help us better analyze and troubleshoot problems that may arise in existing control systems, and it can provide a foundation for learning more advanced topics in control engineering.
 
 ## To Do
 
@@ -28,6 +28,11 @@ Uiterlijk 5 Januari 2022 Programma opleveren en waarna de assesments worden ing
 Om de opdracht eenvoudig te houden, beperken we ons apparaat tot 7 states.
 States zijn beschreven in [treadmill-state-chart.uml](/uml/treadmill-state-chart.uml)
 ![treadmill-state-chart](/uml/treadmill-state-chart.svg)
+
+## State Architecture
+Een vereenvoudigd model van de systeem architectuur ziet er als volgt uit:
+[treadmill-architecture.uml](/uml/treadmill-architecture.uml)
+![treadmill-architecture](/uml/treadmill-architecture.svg)
 
 ## License
 MIT
