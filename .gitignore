@@ -59,3 +59,7 @@ dkms.conf
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+#QT Creator specific
+*.pro.user*
+build-*-Debug/
