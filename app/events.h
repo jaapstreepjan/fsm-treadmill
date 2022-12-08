@@ -2,6 +2,7 @@
 #define EVENTS_H
 
 typedef enum {
+    E_NO,
     E_INIT,
     E_TREADMILL,
     E_RUNNING_START,

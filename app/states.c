@@ -1,10 +1,10 @@
 char * stateEnumToText[] =
 {
-    "init",
-    "standby",
-    "default",
-    "diagnostics",
-    "alterConfig",
-    "emergency",
-    "pause"
+    "S_INIT",
+    "S_STANDBY",
+    "S_DEFAULT",
+    "S_DIAGNOSTICS",
+    "S_ALTERCONFIG",
+    "S_EMERGENCY",
+    "S_PAUSE"
 };

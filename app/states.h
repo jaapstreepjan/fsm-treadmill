@@ -4,13 +4,13 @@
 typedef enum {
     S_NO,               ///< Used for initialisation if state is not yet known
     S_START,            /// simulates [*]
-    init,
-    standby,
-    default,            // QTCreator vind de naam 'default' niet leuk
-    diagnostics,
-    alterConfig,
-    emergency,
-    pause
+    S_INIT,
+    S_STANDBY,
+    S_DEFAULT,            // QTCreator vind de naam 'default' niet leuk
+    S_DIAGNOSTICS,
+    S_ALTERCONFIG,
+    S_EMERGENCY,
+    S_PAUSE
     //end
 } state_t;
 
