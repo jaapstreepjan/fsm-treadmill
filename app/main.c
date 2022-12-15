@@ -87,7 +87,8 @@ int main(void)
 
     /// Second the transitions
     //                                 From            Event                To
-    FSM_AddTransition(&(transition_t){ S_INIT,        E_INIT,              S_STANDBY     });
+    FSM_AddTransition(&(transition_t){ S_START,       E_INIT,              S_INIT        });
+    FSM_AddTransition(&(transition_t){ S_INIT,        E_TREADMILL,         S_STANDBY     });
     FSM_AddTransition(&(transition_t){ S_STANDBY,     E_RUNNING_START,     S_DEFAULT     });
     FSM_AddTransition(&(transition_t){ S_DEFAULT,     E_RUNNING_STOP,      S_STANDBY     });
     FSM_AddTransition(&(transition_t){ S_STANDBY,     E_DIAGNOSTICS_START, S_DIAGNOSTICS });
