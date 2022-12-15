@@ -1,10 +1,19 @@
 /*!
- * The C program written by C. van Dreumel en J.J. Groenendijk is an implementation of a finite state machine (FSM) model of a treadmill.
- * The FSM is a mathematical model of computation that represents the behavior of a system by specifying the possible states it can be in, the transitions between those states, and the actions that are performed when transitioning between states.
- * In the case of a treadmill, the states might include "stopped," "running at a low speed," "running at a high speed," and so on.
- * The transitions between states would be determined by the actions of the user, such as pressing buttons to change the speed or incline of the treadmill.
- * The actions performed by the FSM would be the physical movements of the treadmill belt and any accompanying changes in the display or other output.
- * This program provides a precise and rigorous way of modeling the behavior of a treadmill, which can be useful for understanding how the treadmill works, testing its performance, and potentially even improving its design.
+ * The C program written by C. van Dreumel en J.J. Groenendijk is an
+ * implementation of a finite state machine (FSM) model of a treadmill.
+ * The FSM is a mathematical model of computation that represents the behavior
+ * of a system by specifying the possible states it can be in, the transitions
+ * between those states, and the actions that are performed when transitioning
+ * between states. In the case of a treadmill, the states might include
+ * "stopped," "running at a low speed," "running at a high speed," and so on.
+ * The transitions between states would be determined by the actions of the
+ * user, such as pressing buttons to change the speed or incline of the
+ * treadmill. The actions performed by the FSM would be the physical movements
+ * of the treadmill belt and any accompanying changes in the display or other
+ * output. This program provides a precise and rigorous way of modeling the
+ * behavior of a treadmill, which can be useful for understanding how the
+ * treadmill works, testing its performance, and potentially even improving
+ * its design.
  */
 
 #include <stdio.h>
@@ -19,14 +28,28 @@
 #include "console_functions/devConsole.h"
 
 typedef enum {
-    UNLOCKED,                ///< Used for initialisation of an event variable
-    LOCKED,
+    UNLOCKED,           // LEGACY. DELETE LATER
+    LOCKED,             // LEGACY. DELETE LATER
+    INIT,                ///< Used for initialisation of an event variable
+    STANDBY,
+    DEFAULT,
+    DIAGNOSTICS,
+    ALTERCONFIG,
+    PAUSE,
+    EMERGENCY,
 } lockStatus_t;
 
 char * lockStatusToText[] =
 {
-    "UNLOCKED",
-    "LOCKED",
+    "UNLOCKED",         // LEGACY. DELETE LATER
+    "LOCKED",           // LEGACY. DELETE LATER
+    "INIT",                ///< Used for initialisation of an event variable
+    "STANDBY",
+    "DEFAULT",
+    "DIAGNOSTICS",
+    "ALTERCONFIG",
+    "PAUSE",
+    "EMERGENCY",
 };
 
 
@@ -44,7 +67,6 @@ void S_Init_onEntry(void);
 void S_Init_onExit(void);
 
 void S_Locked_onEntry(void);
-
 void S_Unlocked_onEntry(void);
 
 void S_Standby_onEntry(void);
