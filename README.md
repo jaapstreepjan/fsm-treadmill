@@ -37,11 +37,10 @@ Overall, this state chart describes the behavior of a treadmill machine and the 
 
 ## State Architecture
 The UML diagram describes a layered architecture for a treadmill. The layers are:
-
-    User Interface Layer (UI): This layer contains the screen and buttons that allow the user to interact with the treadmill.
-    System Control Layer (SCL): This layer contains a finite state machine (FSM) that controls the behavior of the treadmill based on user inputs and sensor readings.
-    Subsystems Layer (SL): This layer contains the subsystems that make up the treadmill, such as the band speed motor, incline motor, and emergency brake.
-    Hardware Abstraction Layer (HAL): This layer provides an abstracted interface to the hardware, such as the hardware IO.
+ - User Interface Layer (UI): This layer contains the screen and buttons that allow the user to interact with the treadmill.
+ - System Control Layer (SCL): This layer contains a finite state machine (FSM) that controls the behavior of the treadmill based on user inputs and sensor readings.
+ - Subsystems Layer (SL): This layer contains the subsystems that make up the treadmill, such as the band speed motor, incline motor, and emergency brake.
+ - Hardware Abstraction Layer (HAL): This layer provides an abstracted interface to the hardware, such as the hardware IO.
 
 The FSM in the SCL layer communicates with the subsystems in the SL layer, and the subsystems in turn communicate with the hardware IO in the HAL layer. The screen and buttons in the UI layer also communicate with the hardware IO in the HAL layer.
 
