@@ -80,10 +80,10 @@ int main(void)
     FSM_AddState(S_INIT,       &(state_funcs_t){  S_Init_onEntry,        S_Init_onExit          });
     FSM_AddState(S_STANDBY,    &(state_funcs_t){  S_Standby_onEntry,     S_Standby_onExit       });
     FSM_AddState(S_DEFAULT,    &(state_funcs_t){  S_Default_onEntry,     S_Default_onExit       });
-    FSM_AddState(S_DIAGNOSTICS,&(state_funcs_t){  S_Diagnostics_onEntry, S_DIAGNOSTICS_onExit   });
+    FSM_AddState(S_DIAGNOSTICS,&(state_funcs_t){  S_Diagnostics_onEntry, S_Diagnostics_onExit   });
     FSM_AddState(S_ALTERCONFIG,&(state_funcs_t){  S_Alterconfig_onEntry, S_Alterconfig_onExit   });
     FSM_AddState(S_EMERGENCY,  &(state_funcs_t){  S_Emergency_onEntry,   S_Emergency_onExit     });
-    FSM_AddState(S_PAUSE,      &(state_funcs_t){  S_Pause__onEntry,      S_Pause_onExit         });
+    FSM_AddState(S_PAUSE,      &(state_funcs_t){  S_Pause_onEntry,       S_Pause_onExit         });
 
     /// Second the transitions
     //                                 From            Event                To
@@ -127,6 +127,54 @@ void S_Init_onEntry(void)
 void S_Init_onExit(void)
 {
 
+}
+
+void S_Standby_onEntry(void){
+    // To Do
+}
+
+void S_Standby_onExit(void){
+    // To Do
+}
+
+void S_Default_onEntry(void){
+    // To Do
+}
+
+void S_Default_onExit(void){
+    // To Do
+}
+
+void S_Diagnostics_onEntry(void){
+    // To Do
+}
+
+void S_Diagnostics_onExit(void){
+    // To Do
+}
+
+void S_Alterconfig_onEntry(void){
+    // To Do
+}
+
+void S_Alterconfig_onExit(void){
+    // To Do
+}
+
+void S_Emergency_onEntry(void){
+    // To Do
+}
+
+void S_Emergency_onExit(void){
+    // To Do
+}
+
+void S_Pause_onEntry(void){
+    // To Do
+}
+
+void S_Pause_onExit(void){
+    // To Do
 }
 
 ///Subsystem (simulation) functions
