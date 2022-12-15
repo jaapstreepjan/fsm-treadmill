@@ -52,6 +52,19 @@ void S_Locked_onEntry(void);
 
 void S_Unlocked_onEntry(void);
 
+void S_Standby_onEntry();
+void S_Standby_onExit();
+void S_Default_onEntry();
+void S_Default_onExit();
+void S_Diagnostics_onEntry();
+void S_Diagnostics_onExit();
+void S_Alterconfig_onEntry();
+void S_Alterconfig_onExit();
+void S_Emergency_onEntry();
+void S_Emergency_onExit();
+void S_Pause_onEntry();
+void S_Pause_onExit();
+
 
 ///Subsystem initialization (simulation) functions
 event_t InitialiseSubsystems(void);
@@ -129,51 +142,63 @@ void S_Init_onExit(void)
 
 }
 
-void S_Standby_onEntry(void){
+void S_Standby_onEntry(void)
+{
     // To Do
 }
 
-void S_Standby_onExit(void){
+void S_Standby_onExit(void)
+{
     // To Do
 }
 
-void S_Default_onEntry(void){
+void S_Default_onEntry(void)
+{
     // To Do
 }
 
-void S_Default_onExit(void){
+void S_Default_onExit(void)
+{
     // To Do
 }
 
-void S_Diagnostics_onEntry(void){
+void S_Diagnostics_onEntry(void)
+{
     // To Do
 }
 
-void S_Diagnostics_onExit(void){
+void S_Diagnostics_onExit(void)
+{
     // To Do
 }
 
-void S_Alterconfig_onEntry(void){
+void S_Alterconfig_onEntry(void)
+{
     // To Do
 }
 
-void S_Alterconfig_onExit(void){
+void S_Alterconfig_onExit(void)
+{
     // To Do
 }
 
-void S_Emergency_onEntry(void){
+void S_Emergency_onEntry(void)
+{
     // To Do
 }
 
-void S_Emergency_onExit(void){
+void S_Emergency_onExit(void)
+{
     // To Do
 }
 
-void S_Pause_onEntry(void){
+void S_Pause_onEntry(void)
+{
     // To Do
 }
 
-void S_Pause_onExit(void){
+void S_Pause_onExit(void)
+{
     // To Do
 }
 
