@@ -76,14 +76,14 @@ int main(void)
     /// Define the state machine model
     /// First the state and the pointer to the onEntry and onExit functions
     //           State                           onEntry()               onExit()
-    FSM_AddState(S_START,      &(state_funcs_t){  NULL,                  NULL               });
-    FSM_AddState(S_INIT,       &(state_funcs_t){  S_Init_onEntry,        S_Init_onExit      });
-    FSM_AddState(S_STANDBY,    &(state_funcs_t){  NULL,                  NULL               });
-    FSM_AddState(S_DEFAULT,    &(state_funcs_t){  NULL,                  NULL               });
-    FSM_AddState(S_DIAGNOSTICS,&(state_funcs_t){  NULL,                  NULL               });
-    FSM_AddState(S_ALTERCONFIG,&(state_funcs_t){  NULL,                  NULL               });
-    FSM_AddState(S_EMERGENCY,  &(state_funcs_t){  NULL,                  NULL               });
-    FSM_AddState(S_PAUSE,      &(state_funcs_t){  NULL,                  NULL               });
+    FSM_AddState(S_START,      &(state_funcs_t){  NULL,                  NULL                   });
+    FSM_AddState(S_INIT,       &(state_funcs_t){  S_Init_onEntry,        S_Init_onExit          });
+    FSM_AddState(S_STANDBY,    &(state_funcs_t){  S_Standby_onEntry,     S_Standby_onExit       });
+    FSM_AddState(S_DEFAULT,    &(state_funcs_t){  S_Default_onEntry,     S_Default_onExit       });
+    FSM_AddState(S_DIAGNOSTICS,&(state_funcs_t){  S_Diagnostics_onEntry, S_DIAGNOSTICS_onExit   });
+    FSM_AddState(S_ALTERCONFIG,&(state_funcs_t){  S_Alterconfig_onEntry, S_Alterconfig_onExit   });
+    FSM_AddState(S_EMERGENCY,  &(state_funcs_t){  S_Emergency_onEntry,   S_Emergency_onExit     });
+    FSM_AddState(S_PAUSE,      &(state_funcs_t){  S_Pause__onEntry,      S_Pause_onExit         });
 
     /// Second the transitions
     //                                 From            Event                To
@@ -131,19 +131,19 @@ void S_Init_onExit(void)
 ///Subsystem (simulation) functions
 event_t InitialiseSubsystems(void)
 {
-   state_t state;
-   DSPinitialise();
-   DSPshowDisplay();
-   KYBinitialise();
+    state_t state;
+    DSPinitialise();
+    DSPshowDisplay();
+    KYBinitialise();
 
-   state = FSM_GetState();
-   DCSdebugSystemInfo("S_Init_onEntry:");
-   DCSdebugSystemInfo("Current state: %s", stateEnumToText[state]);
-   DSPshow(2,"System Initialized No errors");
-  // LockStatus = LockTurnstile(LockStatus);
-   DSPshow(3,"Turnstile locked");
+    state = FSM_GetState();
+    DCSdebugSystemInfo("S_Init_onEntry:");
+    DCSdebugSystemInfo("Current state: %s", stateEnumToText[state]);
+    DSPshow(2,"System Initialized No errors");
+    // LockStatus = LockTurnstile(LockStatus);
+    DSPshow(3,"Turnstile locked");
 
-   return(E_TREADMILL);
+    return(E_TREADMILL);
 }
 
 // simulate delay in microseconds
