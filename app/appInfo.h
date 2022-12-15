@@ -2,7 +2,7 @@
 #define APPINFO_H
 
 
-#define APP "Framework example Please change this name in appinfo.h"
+#define APP "Threadmill"
 #define VERSION "0.2"
 // #define NOWAIT
 #endif
