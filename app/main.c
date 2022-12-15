@@ -77,7 +77,7 @@ int main(void)
     /// First the state and the pointer to the onEntry and onExit functions
     //           State                           onEntry()               onExit()
     FSM_AddState(S_START,      &(state_funcs_t){  NULL,                  NULL               });
-    FSM_AddState(S_INIT,       &(state_funcs_t){  NULL,                  NULL               });
+    FSM_AddState(S_INIT,       &(state_funcs_t){  S_Init_onEntry,        S_Init_onExit      });
     FSM_AddState(S_STANDBY,    &(state_funcs_t){  NULL,                  NULL               });
     FSM_AddState(S_DEFAULT,    &(state_funcs_t){  NULL,                  NULL               });
     FSM_AddState(S_DIAGNOSTICS,&(state_funcs_t){  NULL,                  NULL               });
@@ -107,6 +107,12 @@ int main(void)
 
 void S_Init_onEntry(void)
 {
+    event_t nextevent;
+
+    /// Simulate the initialisation
+    nextevent = InitialiseSubsystems();
+
+    FSM_AddEvent(nextevent);           /// Internal generated event
 
 }
 
@@ -116,9 +122,26 @@ void S_Init_onExit(void)
 }
 
 ///Subsystem (simulation) functions
+event_t InitialiseSubsystems(void)
+{
+   state_t state;
+   DSPinitialise();
+   DSPshowDisplay();
+   KYBinitialise();
+
+   state = FSM_GetState();
+   DCSdebugSystemInfo("S_Init_onEntry:");
+   DCSdebugSystemInfo("Current state: %s", stateEnumToText[state]);
+   DSPshow(2,"System Initialized No errors");
+  // LockStatus = LockTurnstile(LockStatus);
+   DSPshow(3,"Turnstile locked");
+
+   return(E_TREADMILL);
+}
 
 // simulate delay in microseconds
 void delay_us(uint32_t d)
 {
-
+    DCSdebugSystemInfo("Delay waiting for %d micro-seconds", d);
+    sleep(10000);
 }
