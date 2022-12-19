@@ -65,19 +65,20 @@ void S_Emergency_onExit(void);
 void S_Pause_onEntry(void);
 void S_Pause_onExit(void);
 
+////Global used viarable
+float Speed;
+float Inc;
+float Distance;
+
 
 ///Subsystem initialization (simulation) functions
 event_t InitialiseSubsystems(void);
 
 ///Subsystem initialization (simulation) functions
-event_t CoinAcceptor(void);
 
 ///Subsystem1 (simulation) functions
-
-int LockTurnstile(const int LockStatus);
-int UnlockTurnstile(const int LockStatus);
-
-event_t TurnstileLock(void);
+event_t Threadmill(void);
+event_t Running_start(void);
 
 ///Helper function example
 void delay_us(uint32_t d);
@@ -90,13 +91,13 @@ int main(void)
     /// First the state and the pointer to the onEntry and onExit functions
     //           State                           onEntry()               onExit()
     FSM_AddState(S_START,      &(state_funcs_t){  NULL,                  NULL                   });
-    FSM_AddState(S_INIT,       &(state_funcs_t){  S_Init_onEntry,        S_Init_onExit          });
-    FSM_AddState(S_STANDBY,    &(state_funcs_t){  S_Standby_onEntry,     S_Standby_onExit       });
-    FSM_AddState(S_DEFAULT,    &(state_funcs_t){  S_Default_onEntry,     S_Default_onExit       });
-    FSM_AddState(S_DIAGNOSTICS,&(state_funcs_t){  S_Diagnostics_onEntry, S_Diagnostics_onExit   });
-    FSM_AddState(S_ALTERCONFIG,&(state_funcs_t){  S_Alterconfig_onEntry, S_Alterconfig_onExit   });
-    FSM_AddState(S_EMERGENCY,  &(state_funcs_t){  S_Emergency_onEntry,   S_Emergency_onExit     });
-    FSM_AddState(S_PAUSE,      &(state_funcs_t){  S_Pause_onEntry,       S_Pause_onExit         });
+    FSM_AddState(S_INIT,       &(state_funcs_t){  S_Init_onEntry,        NULL                   });
+    FSM_AddState(S_STANDBY,    &(state_funcs_t){  S_Standby_onEntry,     NULL                   });
+    FSM_AddState(S_DEFAULT,    &(state_funcs_t){  S_Default_onEntry,     NULL                   });
+    FSM_AddState(S_DIAGNOSTICS,&(state_funcs_t){  S_Diagnostics_onEntry, NULL                   });
+    FSM_AddState(S_ALTERCONFIG,&(state_funcs_t){  S_Alterconfig_onEntry, NULL                   });
+    FSM_AddState(S_EMERGENCY,  &(state_funcs_t){  S_Emergency_onEntry,   NULL                   });
+    FSM_AddState(S_PAUSE,      &(state_funcs_t){  S_Pause_onEntry,       NULL                   });
 
     /// Second the transitions
     //                                 From            Event                To
@@ -137,13 +138,14 @@ void S_Init_onEntry(void)
 
 }
 
-void S_Init_onExit(void)
-{
-
-}
-
 void S_Standby_onEntry(void)
 {
+    event_t nextevent;
+
+    nextevent = Threadmill();
+
+    FSM_AddEvent(nextevent);
+
     // To Do
 }
 
@@ -154,6 +156,11 @@ void S_Standby_onExit(void)
 
 void S_Default_onEntry(void)
 {
+    DSPshow(2,"Speed: %f Km/H", Speed);
+    DSPshow(3,"Inclanation: %f %%", Inc);
+    DSPshow(4,"Distance: %f M", Distance);
+    DSPshow(5,"All systems go!.");
+
     // To Do
 }
 
@@ -164,7 +171,28 @@ void S_Default_onExit(void)
 
 void S_Diagnostics_onEntry(void)
 {
-    // To Do
+    Speed = 0;
+    Inc = 0;
+    Distance = 0;
+
+    DSPshow(2,"Speed: %f", Speed);
+    DSPshow(3,"Inclanation: %f", Inc);
+    DSPshow(4,"Distance: %f", Distance);
+    DSPshow(5,"System in Diagnostic mode please preform duties.");
+
+    int Navigation;
+
+    Navigation  = DCSsimulationSystemInputChar("enter A to return to deffault opperations", "A");
+
+    switch (Navigation)
+    {
+    case 'A':
+        Running_start();
+        break;
+    default:
+        Running_start();
+        break;
+    }
 }
 
 void S_Diagnostics_onExit(void)
@@ -215,9 +243,41 @@ event_t InitialiseSubsystems(void)
     DCSdebugSystemInfo("Current state: %s", stateEnumToText[state]);
     DSPshow(2,"System Initialized No errors");
     // LockStatus = LockTurnstile(LockStatus);
-    DSPshow(3,"Turnstile locked");
+    // DSPshow(3,"Turnstile locked");
 
     return(E_TREADMILL);
+}
+
+event_t	Threadmill(void)
+{
+    int Navigation;
+
+    Navigation  = DCSsimulationSystemInputChar("Hit D for Diagnostics opirations or S for deffault opperations", "D" "S");
+
+    DSPshow (3,"please select D for diagnostics or enter for Default.");
+
+    switch (Navigation)
+    {
+    case 'D':
+        S_Diagnostics_onEntry();
+        break;
+    case 'S':
+        Running_start();
+        break;
+    default:
+        Running_start();
+        break;
+    }
+}
+
+event_t Running_start(void)
+{
+    // setting starting vallues
+    Speed = 0.8;
+    Inc = 0;
+    Distance = 0;
+
+    S_Default_onEntry();
 }
 
 // simulate delay in microseconds
