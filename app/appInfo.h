@@ -2,7 +2,7 @@
 #define APPINFO_H
 
 
-#define APP "Threadmill"
+#define APP "Treadmill"
 #define VERSION "0.2"
 // #define NOWAIT
 #endif
