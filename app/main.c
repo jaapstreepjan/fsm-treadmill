@@ -16,20 +16,21 @@
  * its design.
  */
 
+// Standard C libraries
 #include <stdio.h>
 #include <unistd.h>
 
-/// Finite State Machine Library
+// Finite State Machine library
 #include "fsm_functions/fsm.h"
 
-/// Development Console Library
+// Development Console libraries
 #include "console_functions/keyboard.h"
 #include "console_functions/display.h"
 #include "console_functions/devConsole.h"
 
 typedef enum {
-    UNLOCKED,           // LEGACY. DELETE LATER
-    LOCKED,             // LEGACY. DELETE LATER
+    //    UNLOCKED,           // LEGACY. DELETE LATER
+    //    LOCKED,             // LEGACY. DELETE LATER
     INIT,                ///< Used for initialisation of an event variable
     STANDBY,
     DEFAULT,
@@ -41,8 +42,8 @@ typedef enum {
 
 char * lockStatusToText[] =
 {
-    "UNLOCKED",         // LEGACY. DELETE LATER
-    "LOCKED",           // LEGACY. DELETE LATER
+    //    "UNLOCKED",         // LEGACY. DELETE LATER
+    //    "LOCKED",           // LEGACY. DELETE LATER
     "INIT",                ///< Used for initialisation of an event variable
     "STANDBY",
     "DEFAULT",
@@ -52,14 +53,13 @@ char * lockStatusToText[] =
     "EMERGENCY",
 };
 
-
 extern char * eventEnumToText[];
 extern char * stateEnumToText[];
 
 event_t event;
 state_t state;
 
-int LockStatus = LOCKED;
+int LockStatus = STANDBY;
 
 // Local function prototypes State related
 
@@ -82,31 +82,32 @@ void S_Emergency_onExit(void);
 void S_Pause_onEntry(void);
 void S_Pause_onExit(void);
 
-////Global used viarable
+// Global used viarable
+// Deze naar main verplaatsen?
 float Speed;
 float Inc;
 float Distance;
 
-
-///Subsystem initialization (simulation) functions
+// Subsystem initialization (simulation) functions
 event_t InitialiseSubsystems(void);
 
-///Subsystem initialization (simulation) functions
+// Subsystem initialization (simulation) functions
+// TO DO
 
-///Subsystem1 (simulation) functions
+// Subsystem1 (simulation) functions
 event_t Threadmill(void);
 event_t Running_start(void);
 
-///Helper function example
+// Helper function example
 void delay_us(uint32_t d);
 
 // Main
 int main(void)
 {
 
-    /// Define the state machine model
-    /// First the state and the pointer to the onEntry and onExit functions
-    //           State                           onEntry()               onExit()
+    // Define the state machine model
+    // First the state and the pointer to the onEntry and onExit functions
+    //           State                            onEntry()              onExit()
     FSM_AddState(S_START,      &(state_funcs_t){  NULL,                  NULL                   });
     FSM_AddState(S_INIT,       &(state_funcs_t){  S_Init_onEntry,        NULL                   });
     FSM_AddState(S_STANDBY,    &(state_funcs_t){  S_Standby_onEntry,     NULL                   });
@@ -116,8 +117,8 @@ int main(void)
     FSM_AddState(S_EMERGENCY,  &(state_funcs_t){  S_Emergency_onEntry,   NULL                   });
     FSM_AddState(S_PAUSE,      &(state_funcs_t){  S_Pause_onEntry,       NULL                   });
 
-    /// Second the transitions
-    //                                 From            Event                To
+    // Second the transitions
+    //                                 From           Event                To
     FSM_AddTransition(&(transition_t){ S_START,       E_INIT,              S_INIT        });
     FSM_AddTransition(&(transition_t){ S_INIT,        E_TREADMILL,         S_STANDBY     });
     FSM_AddTransition(&(transition_t){ S_STANDBY,     E_RUNNING_START,     S_DEFAULT     });
@@ -140,9 +141,7 @@ int main(void)
     return 0;
 }
 
-
-
-/// Local function prototypes State related
+// Local function prototypes State related
 
 void S_Init_onEntry(void)
 {
@@ -173,6 +172,7 @@ void S_Standby_onExit(void)
 
 void S_Default_onEntry(void)
 {
+    // Display information for user
     DSPshow(2,"Speed: %f Km/H", Speed);
     DSPshow(3,"Inclanation: %f %%", Inc);
     DSPshow(4,"Distance: %f M", Distance);
@@ -247,7 +247,7 @@ void S_Pause_onExit(void)
     // To Do
 }
 
-///Subsystem (simulation) functions
+// Subsystem (simulation) functions
 event_t InitialiseSubsystems(void)
 {
     state_t state;
@@ -281,6 +281,10 @@ event_t	Threadmill(void)
     case 'S':
         Running_start();
         break;
+        //  TODO
+        //  case 'Q':
+        //      Running_stop();
+        //      break;
     default:
         Running_start();
         break;
@@ -289,7 +293,7 @@ event_t	Threadmill(void)
 
 event_t Running_start(void)
 {
-    // setting starting vallues
+    // setting starting values
     Speed = 0.8;
     Inc = 0;
     Distance = 0;
