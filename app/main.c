@@ -28,23 +28,21 @@
 #include "console_functions/display.h"
 #include "console_functions/devConsole.h"
 
+// Define different type of states for the treadmill
 typedef enum {
-    //    UNLOCKED,           // LEGACY. DELETE LATER
-    //    LOCKED,             // LEGACY. DELETE LATER
-    INIT,                ///< Used for initialisation of an event variable
-    STANDBY,
-    DEFAULT,
-    DIAGNOSTICS,
-    ALTERCONFIG,
-    PAUSE,
-    EMERGENCY,
-} lockStatus_t;
+    INIT,               // Used for initialisation of an event variable.
+    STANDBY,            // Inactive state, ready for user input.
+    DEFAULT,            // Keep speed and incline stable.
+    DIAGNOSTICS,        // State for diagnostics or maintenance of the treadmill.
+    ALTERCONFIG,        // Incline and speed can be changed in this state.
+    PAUSE,              // Speed is 0 and data will stay in memory.
+    EMERGENCY,          // Set speed and incline to 0. Trigger alarm.
+} treadmillState;
 
+// Array of text strings to translate states to human readable names.
 char * lockStatusToText[] =
 {
-    //    "UNLOCKED",         // LEGACY. DELETE LATER
-    //    "LOCKED",           // LEGACY. DELETE LATER
-    "INIT",                ///< Used for initialisation of an event variable
+    "INIT",
     "STANDBY",
     "DEFAULT",
     "DIAGNOSTICS",
