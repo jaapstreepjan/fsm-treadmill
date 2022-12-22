@@ -28,21 +28,20 @@
 #include "console_functions/display.h"
 #include "console_functions/devConsole.h"
 
-// Define different type of states for the treadmill
 typedef enum {
-    INIT,               // Used for initialisation of an event variable.
-    STANDBY,            // Inactive state, ready for user input.
-    DEFAULT,            // Keep speed and incline stable.
-    DIAGNOSTICS,        // State for diagnostics or maintenance of the treadmill.
-    ALTERCONFIG,        // Incline and speed can be changed in this state.
-    PAUSE,              // Speed is 0 and data will stay in memory.
-    EMERGENCY,          // Set speed and incline to 0. Trigger alarm.
-} treadmillState;
+    INIT,                ///< Used for initialisation of an event variable
+    STANDBY,
+    DEFAULT,
+    DIAGNOSTICS,
+    ALTERCONFIG,
+    PAUSE,
+    EMERGENCY,
+}
+lockStatus_t; //?
 
-// Array of text strings to translate states to human readable names.
 char * lockStatusToText[] =
 {
-    "INIT",
+    "INIT",                ///< Used for initialisation of an event variable
     "STANDBY",
     "DEFAULT",
     "DIAGNOSTICS",
@@ -57,8 +56,6 @@ extern char * stateEnumToText[];
 event_t event;
 state_t state;
 
-int LockStatus = STANDBY;
-
 // Local function prototypes State related
 
 void S_Init_onEntry(void);
@@ -71,7 +68,7 @@ void S_Standby_onEntry(void);
 void S_Standby_onExit(void);
 void S_Default_onEntry(void);
 void S_Default_onExit(void);
-void S_Diagnostics_onEntry(void);
+int S_Diagnostics_onEntry(void);
 void S_Diagnostics_onExit(void);
 void S_Alterconfig_onEntry(void);
 void S_Alterconfig_onExit(void);
@@ -93,8 +90,10 @@ event_t InitialiseSubsystems(void);
 // TO DO
 
 // Subsystem1 (simulation) functions
-event_t treadmill(void);
+event_t Treadmill(void);
 event_t Running_start(void);
+event_t Diagnostics_start(void);
+event_t Diagnostics_stop(void);
 
 // Helper function example
 void delay_us(uint32_t d);
@@ -156,7 +155,7 @@ void S_Standby_onEntry(void)
 {
     event_t nextevent;
 
-    nextevent = treadmill();
+    nextevent = Treadmill();
 
     FSM_AddEvent(nextevent);
 
@@ -179,8 +178,9 @@ void S_Default_onEntry(void)
     DSPshow(5,"All systems go!.");
 
     state = FSM_GetState();
-    DCSdebugSystemInfo("S_Init_onEntry:");
     DCSdebugSystemInfo("Current state: %s", stateEnumToText[state]);
+
+    FSM_RevertModel();
 
     // To Do
 }
@@ -190,27 +190,37 @@ void S_Default_onExit(void)
     // To Do
 }
 
-void S_Diagnostics_onEntry(void)
+int S_Diagnostics_onEntry(void)
 {
-    Speed = 0;
-    Inc = 0;
-    Distance = 0;
+    event_t nextevent;
 
-    DSPshow(2,"Speed: %f", Speed);
-    DSPshow(3,"Inclanation: %f", Inc);
-    DSPshow(4,"Distance: %f", Distance);
+    nextevent = Diagnostics_start();
+
+    FSM_AddEvent(nextevent);
+
+    DSPshow(2,"Speed: %f Km/H", Speed);
+    DSPshow(3,"Inclanation: %f %%", Inc);
+    DSPshow(4,"Distance: %f M", Distance);
     DSPshow(5,"System in Diagnostic mode please preform duties.");
+
+    state_t state;
+    state = FSM_GetState();
+    DCSdebugSystemInfo("Current state: %s", stateEnumToText[state]);
+
+    FSM_RevertModel();
 
     int Navigation;
 
-    Navigation  = DCSsimulationSystemInputChar("enter A to return to default operations", "A");
+    Navigation  = DCSsimulationSystemInputChar("enter A to return to deffault opperations", "A");
 
     switch (Navigation)
     {
     case 'A':
+        return (E_DIAGNOSTICS_STOP);
         Running_start();
         break;
     default:
+        return (E_DIAGNOSTICS_STOP);
         Running_start();
         break;
     }
@@ -263,19 +273,15 @@ event_t InitialiseSubsystems(void)
     DCSdebugSystemInfo("S_Init_onEntry:");
     DCSdebugSystemInfo("Current state: %s", stateEnumToText[state]);
     DSPshow(2,"System Initialized No errors");
-    // LockStatus = LockTurnstile(LockStatus);
-    // DSPshow(3,"Turnstile locked");
 
     return(E_TREADMILL);
 }
 
-event_t	treadmill(void)
+event_t	Treadmill(void)
 {
     int Navigation;
 
-    Navigation  = DCSsimulationSystemInputChar("Hit D for Diagnostics operations or S for default operations", "D" "S");
-
-    DSPshow (3,"please select D for diagnostics or enter for Default.");
+    Navigation  = DCSsimulationSystemInputChar("Hit D for Diagnostics opirations or S for deffault opperations", "D" "S");
 
     switch (Navigation)
     {
@@ -295,12 +301,29 @@ event_t	treadmill(void)
     }
 }
 
+event_t Diagnostics_start(void)
+{
+    Speed = 0;
+    Inc = 0;
+    Distance = 0;
+
+    return (E_DIAGNOSTICS_START);
+
+}
+
+event_t Diagnostics_stop(void)
+{
+    return (E_DIAGNOSTICS_STOP);
+}
+
 event_t Running_start(void)
 {
     // setting starting values
     Speed = 0.8;
     Inc = 0;
     Distance = 0;
+
+    return (E_RUNNING_START);
 
     S_Default_onEntry();
 }
