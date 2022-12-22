@@ -172,11 +172,17 @@ void S_Standby_onExit(void)
 
 void S_Default_onEntry(void)
 {
+    state_t state;
+
     // Display information for user
     DSPshow(2,"Speed: %f Km/H", Speed);
     DSPshow(3,"Inclanation: %f %%", Inc);
     DSPshow(4,"Distance: %f M", Distance);
     DSPshow(5,"All systems go!.");
+
+    state = FSM_GetState();
+    DCSdebugSystemInfo("S_Init_onEntry:");
+    DCSdebugSystemInfo("Current state: %s", stateEnumToText[state]);
 
     // To Do
 }
