@@ -98,6 +98,7 @@ event_t Pause(void);
 event_t Resume(void);
 event_t Emergency(void);
 event_t Emergenct_stop(void);
+event_t Config_Change(void);
 
 // Helper function example
 void delay_us(uint32_t d);
@@ -195,7 +196,8 @@ void S_Default_onEntry(void)
         S_Pause_onEntry();
         break;
     case 'B':
-
+        Config_Change();
+        S_Alterconfig_onEntry();
         break;
     case 'C':
         Emergency();
@@ -252,6 +254,25 @@ void S_Diagnostics_onExit(void)
 
 void S_Alterconfig_onEntry(void)
 {
+    state_t state;
+
+    // Display information for user
+    DSPshow(2,"Speed: %f Km/H", Speed);
+    DSPshow(3,"Inclanation: %f %%", Inc);
+    DSPshow(4,"Distance: %f M", Distance);
+    DSPshow(5,"All systems go!.");
+
+    state = FSM_GetState();
+    DCSdebugSystemInfo("Current state: %s", stateEnumToText[state]);
+
+    int Navigation;
+
+    Navigation  = DCSsimulationSystemInputChar("enter A to Comit change", "A");
+
+    switch (Navigation)
+    case 'A':
+
+        break;
     // To Do
 }
 
@@ -423,6 +444,11 @@ event_t Emergency(void)
 event_t Emergenct_stop(void)
 {
     return (E_EMERGENCY_STOP);
+}
+
+event_t Config_Change(void)
+{
+    return (E_CONFIG_CHANGE);
 }
 // simulate delay in microseconds
 void delay_us(uint32_t d)
