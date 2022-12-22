@@ -68,7 +68,7 @@ void S_Standby_onEntry(void);
 void S_Standby_onExit(void);
 void S_Default_onEntry(void);
 void S_Default_onExit(void);
-int S_Diagnostics_onEntry(void);
+void S_Diagnostics_onEntry(void);
 void S_Diagnostics_onExit(void);
 void S_Alterconfig_onEntry(void);
 void S_Alterconfig_onExit(void);
@@ -82,7 +82,7 @@ void S_Pause_onExit(void);
 float Speed;
 float Inc;
 float Distance;
-
+float TEMP;
 // Subsystem initialization (simulation) functions
 event_t InitialiseSubsystems(void);
 
@@ -94,6 +94,10 @@ event_t Treadmill(void);
 event_t Running_start(void);
 event_t Diagnostics_start(void);
 event_t Diagnostics_stop(void);
+event_t Pause(void);
+event_t Resume(void);
+event_t Emergency(void);
+event_t Emergenct_stop(void);
 
 // Helper function example
 void delay_us(uint32_t d);
@@ -180,9 +184,26 @@ void S_Default_onEntry(void)
     state = FSM_GetState();
     DCSdebugSystemInfo("Current state: %s", stateEnumToText[state]);
 
-    FSM_RevertModel();
+    int Navigation;
 
-    // To Do
+    Navigation  = DCSsimulationSystemInputChar("enter A to pause", "A" "B" "C");
+
+    switch (Navigation)
+    {
+    case 'A':
+        Pause();
+        S_Pause_onEntry();
+        break;
+    case 'B':
+
+        break;
+    case 'C':
+        Emergency();
+        S_Emergency_onEntry();
+        break;
+    default:
+        break;
+    }    // To Do
 }
 
 void S_Default_onExit(void)
@@ -190,7 +211,7 @@ void S_Default_onExit(void)
     // To Do
 }
 
-int S_Diagnostics_onEntry(void)
+void S_Diagnostics_onEntry(void)
 {
     event_t nextevent;
 
@@ -207,8 +228,6 @@ int S_Diagnostics_onEntry(void)
     state = FSM_GetState();
     DCSdebugSystemInfo("Current state: %s", stateEnumToText[state]);
 
-    FSM_RevertModel();
-
     int Navigation;
 
     Navigation  = DCSsimulationSystemInputChar("enter A to return to deffault opperations", "A");
@@ -216,12 +235,12 @@ int S_Diagnostics_onEntry(void)
     switch (Navigation)
     {
     case 'A':
-        return (E_DIAGNOSTICS_STOP);
-        Running_start();
+        Diagnostics_stop();
+        S_Default_onEntry();
         break;
     default:
-        return (E_DIAGNOSTICS_STOP);
-        Running_start();
+        Diagnostics_stop();
+        S_Default_onEntry();
         break;
     }
 }
@@ -243,6 +262,28 @@ void S_Alterconfig_onExit(void)
 
 void S_Emergency_onEntry(void)
 {
+    state_t state;
+
+    // Display information for user
+    DSPshow(2,"Speed: %f Km/H", Speed);
+    DSPshow(3,"Inclanation: %f %%", Inc);
+    DSPshow(4,"Distance: %f M", Distance);
+    DSPshow(5,"Emergency! all systems shut down.");
+
+    state = FSM_GetState();
+    DCSdebugSystemInfo("Current state: %s", stateEnumToText[state]);
+
+    int Navigation;
+
+    Navigation  = DCSsimulationSystemInputChar("enter A to reset", "A");
+
+    switch (Navigation)
+    {
+    case 'A':
+        Emergenct_stop();
+        Running_start();
+        break;
+    }
     // To Do
 }
 
@@ -253,9 +294,32 @@ void S_Emergency_onExit(void)
 
 void S_Pause_onEntry(void)
 {
-    // To Do
-}
+    state_t state;
 
+    // Display information for user
+    DSPshow(2,"Speed: %f Km/H", Speed);
+    DSPshow(3,"Inclanation: %f %%", Inc);
+    DSPshow(4,"Distance: %f M", Distance);
+    DSPshow(5,"Treadmill on pause.");
+
+    state = FSM_GetState();
+    DCSdebugSystemInfo("Current state: %s", stateEnumToText[state]);
+
+    int Navigation;
+
+    Navigation  = DCSsimulationSystemInputChar("enter A to resume", "A");
+
+    switch (Navigation)
+    {
+    case 'A':
+        Resume();
+        S_Default_onEntry();
+        break;
+    default:
+        break;
+    // To Do
+    }
+}
 void S_Pause_onExit(void)
 {
     // To Do
@@ -308,11 +372,14 @@ event_t Diagnostics_start(void)
     Distance = 0;
 
     return (E_DIAGNOSTICS_START);
-
 }
 
 event_t Diagnostics_stop(void)
 {
+    Speed = 0.8;
+    Inc = 0;
+    Distance = 0;
+
     return (E_DIAGNOSTICS_STOP);
 }
 
@@ -328,6 +395,35 @@ event_t Running_start(void)
     S_Default_onEntry();
 }
 
+event_t Pause(void)
+{
+    TEMP = Speed ;
+    Speed = 0;
+    Inc = Inc;
+    Distance = Distance;
+
+    return (E_PAUSE);
+}
+
+event_t Resume(void)
+{
+    Speed = TEMP;
+    TEMP = 0;
+    return (E_RESUME);
+}
+
+event_t Emergency(void)
+{
+    Speed = 0;
+    Inc = 0;
+
+    return (E_EMERGENCY_START);
+}
+
+event_t Emergenct_stop(void)
+{
+    return (E_EMERGENCY_STOP);
+}
 // simulate delay in microseconds
 void delay_us(uint32_t d)
 {
