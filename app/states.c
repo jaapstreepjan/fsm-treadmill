@@ -1,5 +1,7 @@
 char * stateEnumToText[] =
 {
+    "S_NO",
+    "S_START",
     "S_INIT",
     "S_STANDBY",
     "S_DEFAULT",

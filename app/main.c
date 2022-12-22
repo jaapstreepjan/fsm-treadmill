@@ -154,6 +154,7 @@ void S_Init_onEntry(void)
 
     FSM_AddEvent(nextevent);           /// Internal generated event
 
+    FSM_RevertModel();
 }
 
 void S_Standby_onEntry(void)
