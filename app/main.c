@@ -93,7 +93,7 @@ event_t InitialiseSubsystems(void);
 // TO DO
 
 // Subsystem1 (simulation) functions
-event_t Threadmill(void);
+event_t treadmill(void);
 event_t Running_start(void);
 
 // Helper function example
@@ -156,7 +156,7 @@ void S_Standby_onEntry(void)
 {
     event_t nextevent;
 
-    nextevent = Threadmill();
+    nextevent = treadmill();
 
     FSM_AddEvent(nextevent);
 
@@ -269,7 +269,7 @@ event_t InitialiseSubsystems(void)
     return(E_TREADMILL);
 }
 
-event_t	Threadmill(void)
+event_t	treadmill(void)
 {
     int Navigation;
 
