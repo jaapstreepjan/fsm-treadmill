@@ -203,7 +203,7 @@ void S_Diagnostics_onEntry(void)
 
     int Navigation;
 
-    Navigation  = DCSsimulationSystemInputChar("enter A to return to deffault opperations", "A");
+    Navigation  = DCSsimulationSystemInputChar("enter A to return to default operations", "A");
 
     switch (Navigation)
     {
@@ -273,7 +273,7 @@ event_t	treadmill(void)
 {
     int Navigation;
 
-    Navigation  = DCSsimulationSystemInputChar("Hit D for Diagnostics opirations or S for deffault opperations", "D" "S");
+    Navigation  = DCSsimulationSystemInputChar("Hit D for Diagnostics operations or S for default operations", "D" "S");
 
     DSPshow (3,"please select D for diagnostics or enter for Default.");
 
