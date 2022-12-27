@@ -14,6 +14,13 @@
  * behavior of a treadmill, which can be useful for understanding how the
  * treadmill works, testing its performance, and potentially even improving
  * its design.
+ *
+ * TO DO:
+ *  - Finish running_stop function
+ *  - Fix pause state
+ *  - Exit diagnostics should show main menu first?
+ *  -
+ *
  */
 
 // Standard C libraries
@@ -36,9 +43,9 @@ typedef enum {
     ALTERCONFIG,
     PAUSE,
     EMERGENCY,
-} lockStatus_t; //?
+} treadmillStatus_t; // Need to find out what this is used for.
 
-char * lockStatusToText[] =
+char * treadmillStatusToText[] =
 {
     "INIT",                ///< Used for initialisation of an event variable
     "STANDBY",
@@ -59,10 +66,8 @@ state_t state;
 
 void S_Init_onEntry(void);
 void S_Init_onExit(void);
-
-void S_Locked_onEntry(void);
-void S_Unlocked_onEntry(void);
-
+//void S_Locked_onEntry(void);
+//void S_Unlocked_onEntry(void);
 void S_Standby_onEntry(void);
 void S_Standby_onExit(void);
 void S_Default_onEntry(void);
@@ -97,7 +102,7 @@ event_t Diagnostics_stop(void);
 event_t Pause(void);
 event_t Resume(void);
 event_t Emergency(void);
-event_t Emergenct_stop(void);
+event_t Emergency_stop(void);
 event_t Config_Change(void);
 
 // Helper function example
@@ -176,17 +181,21 @@ void S_Default_onEntry(void)
     state_t state;
 
     // Display information for user
-    DSPshow(2,"Speed: %f Km/H", Speed);
-    DSPshow(3,"Inclination: %f %%", Inc);
-    DSPshow(4,"Distance: %f M", Distance);
-    DSPshow(5,"All systems go!.");
+    DSPshow(2,"\tSpeed: %.1f Km/H\n"
+              "\tInclination: %.1f %%\n"
+              "\tDistance: %.1f M\n"
+              "\tSystem ready!\n", Speed, Inc, Distance);
 
     state = FSM_GetState();
     DCSdebugSystemInfo("Current state: %s", stateEnumToText[state]);
 
     int Navigation;
 
-    Navigation = DCSsimulationSystemInputChar("\nPress A to Pause.\nPress B to change config.\nPress C to trigger emergency.\n", "A" "B" "C");
+    Navigation = DCSsimulationSystemInputChar("\nPress A to Pause."
+                                              "\nPress B to change config."
+                                              "\nPress C to trigger emergency."
+                                              "\nPress Q to stop running",
+                                              "A" "B" "C" "Q");
 
     switch (Navigation)
     {
@@ -202,6 +211,9 @@ void S_Default_onEntry(void)
         Emergency();
         S_Emergency_onEntry();
         break;
+    case 'Q':
+        Running_stop();
+        // maybe something else here
     default:
         DSPshow(1,"Invalid input!\nPlease try again!");
         break;
@@ -221,10 +233,11 @@ void S_Diagnostics_onEntry(void)
 
     FSM_AddEvent(nextevent);
 
-    DSPshow(2,"Speed: %f Km/H", Speed);
-    DSPshow(3,"Inclination: %f %%", Inc);
-    DSPshow(4,"Distance: %f M", Distance);
-    DSPshow(5,"System in Diagnostic mode please perform duties.");
+    DSPshow(2,"\tSpeed: %.1f Km/H\n"
+              "\tInclination: %.1f %%\n"
+              "\tDistance: %.1f M\n"
+              "\tSystem in Diagnostic mode.\n"
+              "\tCleared for maintenance duties.\n", Speed, Inc, Distance);
 
     state_t state;
     state = FSM_GetState();
@@ -241,8 +254,8 @@ void S_Diagnostics_onEntry(void)
         S_Default_onEntry();
         break;
     default:
-        Diagnostics_stop();
-        S_Default_onEntry();
+        //        Diagnostics_stop();           // Niet nodig?
+        //        S_Default_onEntry();          //
         break;
     }
 }
@@ -257,10 +270,10 @@ void S_Alterconfig_onEntry(void)
     state_t state;
 
     // Display information for user
-    DSPshow(2,"Speed: %f Km/H", Speed);
-    DSPshow(3,"Inclination: %f %%", Inc);
-    DSPshow(4,"Distance: %f M", Distance);
-    DSPshow(5,"All systems go!.");
+    DSPshow(2,"\tSpeed: %.1f Km/H\n"
+              "\tInclination: %.1f %%\n"
+              "\tDistance: %.1f M\n"
+              "\tSystem is ready to go!.\n", Speed, Inc, Distance);
 
     state = FSM_GetState();
     DCSdebugSystemInfo("Current state: %s", stateEnumToText[state]);
@@ -286,10 +299,10 @@ void S_Emergency_onEntry(void)
     state_t state;
 
     // Display information for user
-    DSPshow(2,"Speed: %f Km/H", Speed);
-    DSPshow(3,"Inclination: %f %%", Inc);
-    DSPshow(4,"Distance: %f M", Distance);
-    DSPshow(5,"Emergency! all systems shut down.");
+    DSPshow(2,"\tSpeed: %.1f Km/H\n"
+              "\tInclination: %.1f %%\n"
+              "\tDistance: %.1f M\n"
+              "\tEmergency! System halting!.\n", Speed, Inc, Distance);
 
     state = FSM_GetState();
     DCSdebugSystemInfo("Current state: %s", stateEnumToText[state]);
@@ -301,7 +314,7 @@ void S_Emergency_onEntry(void)
     switch (Navigation)
     {
     case 'A':
-        Emergenct_stop();
+        Emergency_stop();
         Running_start();
         break;
     }
@@ -317,18 +330,19 @@ void S_Pause_onEntry(void)
 {
     state_t state;
 
+
     // Display information for user
-    DSPshow(2,"Speed: %f Km/H", Speed);
-    DSPshow(3,"Inclination: %f %%", Inc);
-    DSPshow(4,"Distance: %f M", Distance);
-    DSPshow(5,"Treadmill on pause.");
+    DSPshow(2,"\tSpeed: %.1f Km/H\n"
+              "\tInclination: %.1f %%\n"
+              "\tDistance: %.1f M\n"
+              "\tSystem Paused.\n", Speed, Inc, Distance);
 
     state = FSM_GetState();
     DCSdebugSystemInfo("Current state: %s", stateEnumToText[state]);
 
     int Navigation;
 
-    Navigation  = DCSsimulationSystemInputChar("enter A to resume", "A");
+    Navigation  = DCSsimulationSystemInputChar("\nPress A to resume", "A");
 
     switch (Navigation)
     {
@@ -380,7 +394,6 @@ event_t	Treadmill(void)
     case 'S':
         Running_start();
         break;
-//  TODO. Stopping function
     case 'Q':
         Running_stop();
         break;
@@ -395,6 +408,8 @@ event_t Diagnostics_start(void)
     Speed = 0;
     Inc = 0;
     Distance = 0;
+
+    state = FSM_GetState();
 
     return (E_DIAGNOSTICS_START);
 }
@@ -440,6 +455,7 @@ event_t Pause(void)
     Inc = Inc;
     Distance = Distance;
 
+    state = FSM_GetState();
     return (E_PAUSE);
 }
 
@@ -458,7 +474,7 @@ event_t Emergency(void)
     return (E_EMERGENCY_START);
 }
 
-event_t Emergenct_stop(void)
+event_t Emergency_stop(void)
 {
     return (E_EMERGENCY_STOP);
 }
