@@ -91,6 +91,7 @@ event_t InitialiseSubsystems(void);
 // Subsystem1 (simulation) functions
 event_t Treadmill(void);
 event_t Running_start(void);
+event_t Running_stop(void);
 event_t Diagnostics_start(void);
 event_t Diagnostics_stop(void);
 event_t Pause(void);
@@ -185,7 +186,7 @@ void S_Default_onEntry(void)
 
     int Navigation;
 
-    Navigation  = DCSsimulationSystemInputChar("enter A to pause", "A" "B" "C");
+    Navigation = DCSsimulationSystemInputChar("\nPress A to Pause.\nPress B to change config.\nPress C to trigger emergency.\n", "A" "B" "C");
 
     switch (Navigation)
     {
@@ -202,6 +203,7 @@ void S_Default_onEntry(void)
         S_Emergency_onEntry();
         break;
     default:
+        DSPshow(1,"Invalid input!\nPlease try again!");
         break;
     }    // To Do
 }
@@ -230,7 +232,7 @@ void S_Diagnostics_onEntry(void)
 
     int Navigation;
 
-    Navigation  = DCSsimulationSystemInputChar("enter A to return to default operations", "A");
+    Navigation  = DCSsimulationSystemInputChar("\nPress A to return to default operations.", "A");
 
     switch (Navigation)
     {
@@ -265,7 +267,7 @@ void S_Alterconfig_onEntry(void)
 
     int Navigation;
 
-    Navigation  = DCSsimulationSystemInputChar("enter A to commit change", "A");
+    Navigation  = DCSsimulationSystemInputChar("\nPress A to commit change.", "A");
 
     switch (Navigation)
     case 'A':
@@ -294,7 +296,7 @@ void S_Emergency_onEntry(void)
 
     int Navigation;
 
-    Navigation  = DCSsimulationSystemInputChar("enter A to reset", "A");
+    Navigation  = DCSsimulationSystemInputChar("\nPress A to reset.", "A");
 
     switch (Navigation)
     {
@@ -364,7 +366,11 @@ event_t	Treadmill(void)
 {
     int Navigation;
 
-    Navigation  = DCSsimulationSystemInputChar("Hit D for diagnostics operations or S for default operations", "D" "S");
+    Navigation  = DCSsimulationSystemInputChar("\nPress D for diagnostics operations."
+                                               "\nPress S for default operations."
+                                               "\nPress Q to stop running."
+                                               "\n",
+                                               "D" "S" "Q");
 
     switch (Navigation)
     {
@@ -374,10 +380,10 @@ event_t	Treadmill(void)
     case 'S':
         Running_start();
         break;
-        //  TODO
-        //  case 'Q':
-        //      Running_stop();
-        //      break;
+//  TODO. Stopping function
+    case 'Q':
+        Running_stop();
+        break;
     default:
         Running_start();
         break;
@@ -409,9 +415,22 @@ event_t Running_start(void)
     Inc = 0;
     Distance = 0;
 
+    DCSdebugSystemInfo("Current state: %s", stateEnumToText[state]);
+
     return (E_RUNNING_START);
 
     S_Default_onEntry();
+}
+
+event_t Running_stop(void)
+{
+    // stopping treadmill with this function
+    Speed = 0;
+    Inc = 0;
+
+    return (E_RUNNING_STOP);
+
+    S_Standby_onEntry();
 }
 
 event_t Pause(void)
