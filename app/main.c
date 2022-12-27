@@ -66,8 +66,8 @@ state_t state;
 
 void S_Init_onEntry(void);
 void S_Init_onExit(void);
-//void S_Locked_onEntry(void);
-//void S_Unlocked_onEntry(void);
+//void S_Locked_onEntry(void);      // LEGACY
+//void S_Unlocked_onEntry(void);    // LEGACY
 void S_Standby_onEntry(void);
 void S_Standby_onExit(void);
 void S_Default_onEntry(void);
@@ -87,11 +87,10 @@ float Speed;
 float Inc;
 float Distance;
 float TEMP;
-// Subsystem initialization (simulation) functions
-event_t InitialiseSubsystems(void);
 
 // Subsystem initialization (simulation) functions
-// TO DO
+event_t InitialiseSubsystems(void);
+event_t resumeButton(void);
 
 // Subsystem1 (simulation) functions
 event_t Treadmill(void);
@@ -133,6 +132,7 @@ int main(void)
     FSM_AddTransition(&(transition_t){ S_STANDBY,     E_DIAGNOSTICS_START, S_DIAGNOSTICS });
     FSM_AddTransition(&(transition_t){ S_DIAGNOSTICS, E_DIAGNOSTICS_STOP,  S_STANDBY     });
     FSM_AddTransition(&(transition_t){ S_DEFAULT,     E_PAUSE,             S_PAUSE       });
+    FSM_AddTransition(&(transition_t){ S_PAUSE,       E_RESUME,            S_DEFAULT     });
     FSM_AddTransition(&(transition_t){ S_DEFAULT,     E_CONFIG_CHANGE,     S_ALTERCONFIG });
     FSM_AddTransition(&(transition_t){ S_ALTERCONFIG, E_CONFIG_DONE,       S_DEFAULT     });
     FSM_AddTransition(&(transition_t){ S_DEFAULT,     E_EMERGENCY_START,   S_EMERGENCY   });
@@ -142,8 +142,10 @@ int main(void)
 
     FSM_RunStateMachine(S_START, E_INIT);
 
-    /// Use this test function to test your model
-    /// FSM_RevertModel();
+    // Use this test function to test your model
+    // FSM_RevertModel();
+
+    //    FSM_FlushEnexpectedEvents(true);
 
     return 0;
 }
@@ -328,36 +330,9 @@ void S_Emergency_onExit(void)
 
 void S_Pause_onEntry(void)
 {
-    state_t state;
-
-
-    // Display information for user
-    DSPshow(2,"\tSpeed: %.1f Km/H\n"
-              "\tInclination: %.1f %%\n"
-              "\tDistance: %.1f M\n"
-              "\tSystem Paused.\n", Speed, Inc, Distance);
-
-    state = FSM_GetState();
-    DCSdebugSystemInfo("Current state: %s", stateEnumToText[state]);
-
-    int Navigation;
-
-    Navigation  = DCSsimulationSystemInputChar("\nPress A to resume", "A");
-
-    switch (Navigation)
-    {
-    case 'A':
-        Resume();
-        S_Default_onEntry();
-        break;
-    default:
-        break;
-        // To Do
-    }
-}
-void S_Pause_onExit(void)
-{
-    // To Do
+    event_t nextevent;
+    nextevent = Pause();
+    FSM_AddEvent(nextevent);
 }
 
 // Subsystem (simulation) functions
@@ -410,6 +385,7 @@ event_t Diagnostics_start(void)
     Distance = 0;
 
     state = FSM_GetState();
+    DCSdebugSystemInfo("Current state: %s", stateEnumToText[state]);
 
     return (E_DIAGNOSTICS_START);
 }
@@ -450,13 +426,34 @@ event_t Running_stop(void)
 
 event_t Pause(void)
 {
-    TEMP = Speed ;
+/*    TEMP = Speed ;
     Speed = 0;
     Inc = Inc;
     Distance = Distance;
+    return (E_PAUSE);
+*/
+
+    // New 27 december
+    DSPshow(2,"Treadmill paused.");
+
+    int response;
+    response = DCSsimulationSystemInputChar("Press A to continue", "A");
 
     state = FSM_GetState();
-    return (E_PAUSE);
+    DCSdebugSystemInfo("Current state: %s", stateEnumToText[state]);
+
+    switch (response)
+    {
+       case 'A':
+          DSPshow(3,"Resuming operations");
+          return(E_RESUME);
+          break;
+       default:
+          DCSdebugSystemInfo("Undefined this should not happen");
+          DCSdebugSystemInfo("Return with event E_EXCEPTION");
+          DCSdebugSystemInfo("next state is undefined");
+          return(E_EMERGENCY_START);
+    }
 }
 
 event_t Resume(void)
