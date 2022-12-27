@@ -36,8 +36,7 @@ typedef enum {
     ALTERCONFIG,
     PAUSE,
     EMERGENCY,
-}
-lockStatus_t; //?
+} lockStatus_t; //?
 
 char * lockStatusToText[] =
 {
@@ -153,8 +152,6 @@ void S_Init_onEntry(void)
     nextevent = InitialiseSubsystems();
 
     FSM_AddEvent(nextevent);           /// Internal generated event
-
-    FSM_RevertModel();
 }
 
 void S_Standby_onEntry(void)
@@ -179,7 +176,7 @@ void S_Default_onEntry(void)
 
     // Display information for user
     DSPshow(2,"Speed: %f Km/H", Speed);
-    DSPshow(3,"Inclanation: %f %%", Inc);
+    DSPshow(3,"Inclination: %f %%", Inc);
     DSPshow(4,"Distance: %f M", Distance);
     DSPshow(5,"All systems go!.");
 
@@ -223,9 +220,9 @@ void S_Diagnostics_onEntry(void)
     FSM_AddEvent(nextevent);
 
     DSPshow(2,"Speed: %f Km/H", Speed);
-    DSPshow(3,"Inclanation: %f %%", Inc);
+    DSPshow(3,"Inclination: %f %%", Inc);
     DSPshow(4,"Distance: %f M", Distance);
-    DSPshow(5,"System in Diagnostic mode please preform duties.");
+    DSPshow(5,"System in Diagnostic mode please perform duties.");
 
     state_t state;
     state = FSM_GetState();
@@ -233,7 +230,7 @@ void S_Diagnostics_onEntry(void)
 
     int Navigation;
 
-    Navigation  = DCSsimulationSystemInputChar("enter A to return to deffault opperations", "A");
+    Navigation  = DCSsimulationSystemInputChar("enter A to return to default operations", "A");
 
     switch (Navigation)
     {
@@ -259,7 +256,7 @@ void S_Alterconfig_onEntry(void)
 
     // Display information for user
     DSPshow(2,"Speed: %f Km/H", Speed);
-    DSPshow(3,"Inclanation: %f %%", Inc);
+    DSPshow(3,"Inclination: %f %%", Inc);
     DSPshow(4,"Distance: %f M", Distance);
     DSPshow(5,"All systems go!.");
 
@@ -268,13 +265,13 @@ void S_Alterconfig_onEntry(void)
 
     int Navigation;
 
-    Navigation  = DCSsimulationSystemInputChar("enter A to Comit change", "A");
+    Navigation  = DCSsimulationSystemInputChar("enter A to commit change", "A");
 
     switch (Navigation)
     case 'A':
 
         break;
-    // To Do
+        // To Do
 }
 
 void S_Alterconfig_onExit(void)
@@ -288,7 +285,7 @@ void S_Emergency_onEntry(void)
 
     // Display information for user
     DSPshow(2,"Speed: %f Km/H", Speed);
-    DSPshow(3,"Inclanation: %f %%", Inc);
+    DSPshow(3,"Inclination: %f %%", Inc);
     DSPshow(4,"Distance: %f M", Distance);
     DSPshow(5,"Emergency! all systems shut down.");
 
@@ -320,7 +317,7 @@ void S_Pause_onEntry(void)
 
     // Display information for user
     DSPshow(2,"Speed: %f Km/H", Speed);
-    DSPshow(3,"Inclanation: %f %%", Inc);
+    DSPshow(3,"Inclination: %f %%", Inc);
     DSPshow(4,"Distance: %f M", Distance);
     DSPshow(5,"Treadmill on pause.");
 
@@ -339,7 +336,7 @@ void S_Pause_onEntry(void)
         break;
     default:
         break;
-    // To Do
+        // To Do
     }
 }
 void S_Pause_onExit(void)
@@ -367,7 +364,7 @@ event_t	Treadmill(void)
 {
     int Navigation;
 
-    Navigation  = DCSsimulationSystemInputChar("Hit D for Diagnostics opirations or S for deffault opperations", "D" "S");
+    Navigation  = DCSsimulationSystemInputChar("Hit D for diagnostics operations or S for default operations", "D" "S");
 
     switch (Navigation)
     {
