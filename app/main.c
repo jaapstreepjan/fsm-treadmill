@@ -165,13 +165,39 @@ void S_Init_onEntry(void)
 
 void S_Standby_onEntry(void)
 {
+    // Show current state
+    state_t state;
+    state = FSM_GetState();
+    DCSdebugSystemInfo("Current state: %s", stateEnumToText[state]);
+
+    // Display information for user
+    DSPshow(2,"\tSpeed: %.1f Km/H\n"
+              "\tInclination: %.1f %%\n"
+              "\tDistance: %.1f M\n"
+              "\tChange configuration.\n", Speed, Inc, Distance);
+
+    // Show user options
     event_t nextevent;
+    int Navigation;
+    Navigation  = DCSsimulationSystemInputChar("\n"
+                                               "Press D for diagnostics\n"
+                                               "Press S for default running\n",
+                                               "D" "S");
 
-    nextevent = Treadmill();
-
-    FSM_AddEvent(nextevent);
-
-    // To Do
+    switch (Navigation)
+    {
+    case 'D':       // Go to state S_DIAGNOSTICS
+        nextevent = Diagnostics_start();
+        FSM_AddEvent(nextevent);
+        break;
+    case 'S':       // Go to state S_DEFAULT
+        nextevent = Running_start();
+        FSM_AddEvent(nextevent);
+        break;
+    default:        // Show warning here about invalid input
+        DSPshow(1,"Invalid input!\nPlease try again!");
+        break;
+    }
 }
 
 void S_Standby_onExit(void)
@@ -195,10 +221,11 @@ void S_Default_onEntry(void)
     // Show user options
     event_t nextevent;
     int Navigation;
-    Navigation = DCSsimulationSystemInputChar("\nPress P to Pause."
-                                              "\nPress C to change config."
-                                              "\nPress E to trigger emergency."
-                                              "\nPress Q to stop running",
+    Navigation = DCSsimulationSystemInputChar("\n"
+                                              "Press P to Pause\n"
+                                              "Press C to change config\n"
+                                              "Press E to trigger emergency\n"
+                                              "Press Q to stop running\n",
                                               "P" "C" "E" "Q");
 
     switch (Navigation)
@@ -394,34 +421,17 @@ event_t InitialiseSubsystems(void)
     DCSdebugSystemInfo("Current state: %s", stateEnumToText[state]);
     DSPshow(2,"System Initialized No errors");
 
-    return(E_TREADMILL);
+    return(E_TREADMILL);        // Volgens mij moet dit E_INIT zijn, maar dan werkt het niet
 }
 
 event_t	Treadmill(void)
 {
-    int Navigation;
+    // Show current state
+    state_t state;
+    state = FSM_GetState();
+    DCSdebugSystemInfo("Current state: %s", stateEnumToText[state]);
 
-    Navigation  = DCSsimulationSystemInputChar("\nPress D for diagnostics operations."
-                                               "\nPress S for default operations."
-                                               "\nPress Q to stop running."
-                                               "\n",
-                                               "D" "S" "Q");
-
-    switch (Navigation)
-    {
-    case 'D':
-        S_Diagnostics_onEntry();
-        break;
-    case 'S':
-        Running_start();
-        break;
-    case 'Q':
-        Running_stop();
-        break;
-    default:
-        Running_start();
-        break;
-    }
+    return (E_TREADMILL);
 }
 
 event_t Diagnostics_start(void)
@@ -485,8 +495,10 @@ event_t Pause(void)
 
 event_t Resume(void)
 {
+    // Restore user configured speed here
     Speed = TEMP;
     TEMP = 0;
+
     return (E_RESUME);
 }
 
