@@ -15,12 +15,6 @@
  * treadmill works, testing its performance, and potentially even improving
  * its design.
  *
- * TO DO:
- *  - Finish running_stop function
- *  - Fix pause state
- *  - Exit diagnostics should show main menu first?
- *  -
- *
  */
 
 // Standard C libraries
@@ -90,20 +84,20 @@ float TEMP;
 
 // Subsystem initialization (simulation) functions
 event_t InitialiseSubsystems(void);
-event_t resumeButton(void);
 
 // Subsystem1 (simulation) functions
+// EF_ prefix is used for Event Functions
 event_t Treadmill(void);
-event_t Running_start(void);
-event_t Running_stop(void);
-event_t Diagnostics_start(void);
-event_t Diagnostics_stop(void);
-event_t Pause(void);
-event_t Resume(void);
-event_t Emergency(void);
-event_t Emergency_stop(void);
-event_t Config_Change(void);
-event_t Config_Done(void);
+event_t EF_RUNNING_START(void);
+event_t EF_RUNNING_STOP(void);
+event_t EF_DIAGNOSTICS_START(void);
+event_t EF_DIAGNOSTICS_STOP(void);
+event_t EF_PAUSE(void);
+event_t EF_RESUME(void);
+event_t EF_EMERGENCY_START(void);
+event_t EF_EMERGENCY_STOP(void);
+event_t EF_CONFIG_CHANGE(void);
+event_t EF_CONFIG_DONE(void);
 
 // Helper function example
 void delay_us(uint32_t d);
@@ -168,7 +162,7 @@ void S_Standby_onEntry(void)
     // Show current state
     state_t state;
     state = FSM_GetState();
-    DCSdebugSystemInfo("Current state: %s", stateEnumToText[state]);
+    DCSdebugSystemInfo("New state: %s", stateEnumToText[state]);
 
     // Display information for user
     DSPshow(2,"\tSpeed: %.1f Km/H\n"
@@ -187,11 +181,11 @@ void S_Standby_onEntry(void)
     switch (Navigation)
     {
     case 'D':       // Go to state S_DIAGNOSTICS
-        nextevent = Diagnostics_start();
+        nextevent = EF_DIAGNOSTICS_START();
         FSM_AddEvent(nextevent);
         break;
     case 'S':       // Go to state S_DEFAULT
-        nextevent = Running_start();
+        nextevent = EF_RUNNING_START();
         FSM_AddEvent(nextevent);
         break;
     default:        // Show warning here about invalid input
@@ -210,7 +204,7 @@ void S_Default_onEntry(void)
     // Show current state
     state_t state;
     state = FSM_GetState();
-    DCSdebugSystemInfo("Current state: %s", stateEnumToText[state]);
+    DCSdebugSystemInfo("New state: %s", stateEnumToText[state]);
 
     // Display information for user
     DSPshow(2,"\tSpeed: %.1f Km/H\n"
@@ -231,19 +225,19 @@ void S_Default_onEntry(void)
     switch (Navigation)
     {
     case 'P':
-        nextevent = Pause();
+        nextevent = EF_PAUSE();
         FSM_AddEvent(nextevent);
         break;
     case 'C':
-        nextevent = Config_Change();
+        nextevent = EF_CONFIG_CHANGE();
         FSM_AddEvent(nextevent);
         break;
     case 'E':
-        nextevent = Emergency();
+        nextevent = EF_EMERGENCY_START();
         FSM_AddEvent(nextevent);
         break;
     case 'Q':
-        nextevent = Running_stop();
+        nextevent = EF_RUNNING_STOP();
         FSM_AddEvent(nextevent);
     default:
         DSPshow(1,"Invalid input!\nPlease try again!");
@@ -261,7 +255,7 @@ void S_Diagnostics_onEntry(void)
     // Show current state
     state_t state;
     state = FSM_GetState();
-    DCSdebugSystemInfo("Current state: %s", stateEnumToText[state]);
+    DCSdebugSystemInfo("New state: %s", stateEnumToText[state]);
 
     // Show user information
     DSPshow(2,"\tSpeed: %.1f Km/H\n"
@@ -281,7 +275,7 @@ void S_Diagnostics_onEntry(void)
     switch (Navigation)
     {
     case 'Q':
-        nextevent = Diagnostics_stop();
+        nextevent = EF_DIAGNOSTICS_STOP();
         FSM_AddEvent(nextevent);
         break;
     case 'O':
@@ -303,7 +297,7 @@ void S_Alterconfig_onEntry(void)
     // Show current state
     state_t state;
     state = FSM_GetState();
-    DCSdebugSystemInfo("Current state: %s", stateEnumToText[state]);
+    DCSdebugSystemInfo("New state: %s", stateEnumToText[state]);
 
     // Display information for user
     DSPshow(2,"\tSpeed: %.1f Km/H\n"
@@ -334,13 +328,15 @@ void S_Alterconfig_onEntry(void)
         // change Distance here
         break;
     case 'E':
-        nextevent = Emergency();
+        nextevent = EF_EMERGENCY_START();
         FSM_AddEvent(nextevent);
+        break;
     case 'C':
-        nextevent = Config_Done();
+        nextevent = EF_CONFIG_DONE();
         FSM_AddEvent(nextevent);
         break;
     default:
+        DSPshow(1,"Invalid input!\nPlease try again!");
         break;
     }
 }
@@ -375,7 +371,7 @@ void S_Emergency_onEntry(void)
     switch (Navigation)
     {
     case 'Q':
-        nextevent = Emergency_stop();
+        nextevent = EF_EMERGENCY_STOP();
         FSM_AddEvent(nextevent);
         break;
     case 'O':
@@ -412,13 +408,13 @@ void S_Pause_onEntry(void)
     {
     case 'C':
         DSPshow(3,"Resuming operations");
-        nextevent = Resume();
+        nextevent = EF_RESUME();
         FSM_AddEvent(nextevent);
         break;
     default:
         DCSdebugSystemInfo("Undefined this should not happen");
         DCSdebugSystemInfo("Go to emergency state");
-        nextevent = Emergency();
+        nextevent = EF_EMERGENCY_START();
         FSM_AddEvent(nextevent);
     }
 }
@@ -432,8 +428,7 @@ event_t InitialiseSubsystems(void)
     KYBinitialise();
 
     state = FSM_GetState();
-    DCSdebugSystemInfo("S_Init_onEntry:");
-    DCSdebugSystemInfo("Current state: %s", stateEnumToText[state]);
+    DCSdebugSystemInfo("Old state: %s", stateEnumToText[state]);
     DSPshow(2,"System Initialized No errors");
 
     return(E_TREADMILL);        // Volgens mij moet dit E_INIT zijn, maar dan werkt het niet
@@ -444,13 +439,18 @@ event_t	Treadmill(void)
     // Show current state
     state_t state;
     state = FSM_GetState();
-    DCSdebugSystemInfo("Current state: %s", stateEnumToText[state]);
+    DCSdebugSystemInfo("Old state: %s", stateEnumToText[state]);
 
     return (E_TREADMILL);
 }
 
-event_t Diagnostics_start(void)
+event_t EF_DIAGNOSTICS_START(void)
 {
+    // Show current state
+    state_t state;
+    state = FSM_GetState();
+    DCSdebugSystemInfo("Old state: %s", stateEnumToText[state]);
+
     // Start diagnostics state.
     // Set incline, speed and distance to zero.
     Speed = 0;
@@ -460,8 +460,13 @@ event_t Diagnostics_start(void)
     return (E_DIAGNOSTICS_START);
 }
 
-event_t Diagnostics_stop(void)
+event_t EF_DIAGNOSTICS_STOP(void)
 {
+    // Show current state
+    state_t state;
+    state = FSM_GetState();
+    DCSdebugSystemInfo("Old state: %s", stateEnumToText[state]);
+
     // Stop diagnostics and go to default state
     // Maybe restore default running configuration?
     Speed = 0.8;
@@ -471,33 +476,44 @@ event_t Diagnostics_stop(void)
     return (E_DIAGNOSTICS_STOP);
 }
 
-event_t Running_start(void)
+event_t EF_RUNNING_START(void)
 {
+    // Show current state
+    state_t state;
+    state = FSM_GetState();
+    DCSdebugSystemInfo("Old state: %s", stateEnumToText[state]);
+
     // setting starting values
     Speed = 0.8;
     Inc = 0;
     Distance = 0;
 
-    DCSdebugSystemInfo("Current state: %s", stateEnumToText[state]);
-
     return (E_RUNNING_START);
 
-    S_Default_onEntry();
+    //S_Default_onEntry();
 }
 
-event_t Running_stop(void)
+event_t EF_RUNNING_STOP(void)
 {
+    // Show current state
+    state_t state;
+    state = FSM_GetState();
+    DCSdebugSystemInfo("Old state: %s", stateEnumToText[state]);
+
     // stopping treadmill with this function
     Speed = 0;
     Inc = 0;
 
     return (E_RUNNING_STOP);
-
-    S_Standby_onEntry();
 }
 
-event_t Pause(void)
+event_t EF_PAUSE(void)
 {
+    // Show current state
+    state_t state;
+    state = FSM_GetState();
+    DCSdebugSystemInfo("Old state: %s", stateEnumToText[state]);
+
     // Set speed of treadmill to zero. Keep other options the same.
     TEMP = Speed ;
     Speed = 0;
@@ -508,8 +524,13 @@ event_t Pause(void)
     return (E_PAUSE);
 }
 
-event_t Resume(void)
+event_t EF_RESUME(void)
 {
+    // Show current state
+    state_t state;
+    state = FSM_GetState();
+    DCSdebugSystemInfo("Old state: %s", stateEnumToText[state]);
+
     // Restore user configured speed here
     Speed = TEMP;
     TEMP = 0;
@@ -517,8 +538,13 @@ event_t Resume(void)
     return (E_RESUME);
 }
 
-event_t Emergency(void)
+event_t EF_EMERGENCY_START(void)
 {
+    // Show current state
+    state_t state;
+    state = FSM_GetState();
+    DCSdebugSystemInfo("Old state: %s", stateEnumToText[state]);
+
     // Trigger alarms and emergency things here.
     Speed = 0;
     Inc = 0;
@@ -526,20 +552,35 @@ event_t Emergency(void)
     return (E_EMERGENCY_START);
 }
 
-event_t Emergency_stop(void)
+event_t EF_EMERGENCY_STOP(void)
 {
+    // Show current state
+    state_t state;
+    state = FSM_GetState();
+    DCSdebugSystemInfo("Old state: %s", stateEnumToText[state]);
+
     // Reset emergency triggers here
     // Stop alarm also here
     return (E_EMERGENCY_STOP);
 }
 
-event_t Config_Change(void)
+event_t EF_CONFIG_CHANGE(void)
 {
+    // Show current state
+    state_t state;
+    state = FSM_GetState();
+    DCSdebugSystemInfo("Old state: %s", stateEnumToText[state]);
+
     return (E_CONFIG_CHANGE);
 }
 
-event_t Config_Done(void)
+event_t EF_CONFIG_DONE(void)
 {
+    // Show current state
+    state_t state;
+    state = FSM_GetState();
+    DCSdebugSystemInfo("Old state: %s", stateEnumToText[state]);
+
     // Commit changes to saved configuration
 
     return (E_CONFIG_DONE);
