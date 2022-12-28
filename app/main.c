@@ -103,6 +103,7 @@ event_t Resume(void);
 event_t Emergency(void);
 event_t Emergency_stop(void);
 event_t Config_Change(void);
+event_t Config_Done(void);
 
 // Helper function example
 void delay_us(uint32_t d);
@@ -271,26 +272,45 @@ void S_Diagnostics_onExit(void)
 
 void S_Alterconfig_onEntry(void)
 {
+    // Show current state
     state_t state;
+    state = FSM_GetState();
+    DCSdebugSystemInfo("Current state: %s", stateEnumToText[state]);
 
     // Display information for user
     DSPshow(2,"\tSpeed: %.1f Km/H\n"
               "\tInclination: %.1f %%\n"
               "\tDistance: %.1f M\n"
-              "\tSystem is ready to go!.\n", Speed, Inc, Distance);
+              "\tChange configuration.\n", Speed, Inc, Distance);
 
-    state = FSM_GetState();
-    DCSdebugSystemInfo("Current state: %s", stateEnumToText[state]);
-
+    // Show user information
     int Navigation;
+    Navigation = DCSsimulationSystemInputChar("\n"
+                                              "Press S to change Speed\n"
+                                              "Press I to change Incline\n"
+                                              "Press D to change Distance\n"
+                                              "Press C to commit Change\n",
+                                              "S" "I" "D" "C");
 
-    Navigation  = DCSsimulationSystemInputChar("\nPress A to commit change.", "A");
-
+    event_t nextevent;
     switch (Navigation)
-    case 'A':
-
+    {
+    case 'S':
+        // change speed here
         break;
-        // To Do
+    case 'I':
+        // chagne Incline here
+        break;
+    case 'D':
+        // change Distance here
+        break;
+    case 'C':
+        nextevent = Config_Done();
+        FSM_AddEvent(nextevent);
+        break;
+    default:
+        break;
+    }
 }
 
 void S_Alterconfig_onExit(void)
@@ -405,12 +425,11 @@ event_t	Treadmill(void)
 
 event_t Diagnostics_start(void)
 {
+    // Start diagnostics state.
+    // Set incline, speed and distance to zero.
     Speed = 0;
     Inc = 0;
     Distance = 0;
-
-    state = FSM_GetState();
-    DCSdebugSystemInfo("Current state: %s", stateEnumToText[state]);
 
     return (E_DIAGNOSTICS_START);
 }
@@ -485,6 +504,14 @@ event_t Config_Change(void)
 {
     return (E_CONFIG_CHANGE);
 }
+
+event_t Config_Done(void)
+{
+    // Commit changes to saved configuration
+
+    return (E_CONFIG_DONE);
+}
+
 // simulate delay in microseconds
 void delay_us(uint32_t d)
 {
