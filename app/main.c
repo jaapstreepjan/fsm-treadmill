@@ -317,8 +317,9 @@ void S_Alterconfig_onEntry(void)
                                               "Press S to change Speed\n"
                                               "Press I to change Incline\n"
                                               "Press D to change Distance\n"
+                                              "Press E for Emergencies\n"
                                               "Press C to commit Change\n",
-                                              "S" "I" "D" "C");
+                                              "S" "I" "D" "E" "C");
 
     event_t nextevent;
     switch (Navigation)
@@ -332,6 +333,9 @@ void S_Alterconfig_onEntry(void)
     case 'D':
         // change Distance here
         break;
+    case 'E':
+        nextevent = Emergency();
+        FSM_AddEvent(nextevent);
     case 'C':
         nextevent = Config_Done();
         FSM_AddEvent(nextevent);
@@ -348,26 +352,37 @@ void S_Alterconfig_onExit(void)
 
 void S_Emergency_onEntry(void)
 {
+    // Show current state
     state_t state;
-
-    // Display information for user
-    DSPshow(2,"\tSpeed: %.1f Km/H\n"
-              "\tInclination: %.1f %%\n"
-              "\tDistance: %.1f M\n"
-              "\tEmergency! System halting!.\n", Speed, Inc, Distance);
-
     state = FSM_GetState();
     DCSdebugSystemInfo("Current state: %s", stateEnumToText[state]);
 
-    int Navigation;
+    // Show user information
+    DSPshow(2,"\tSpeed: %.1f Km/H\n"
+              "\tInclination: %.1f %%\n"
+              "\tDistance: %.1f M\n"
+              "\tEmergency mode\n",
+            Speed, Inc, Distance);
 
-    Navigation  = DCSsimulationSystemInputChar("\nPress A to reset.", "A");
+    // Show user options
+    event_t nextevent;
+    int Navigation;
+    Navigation  = DCSsimulationSystemInputChar("\n"
+                                               "Press O for Other things\n"
+                                               "Press Q to Quit emergency\n",
+                                               "Q" "O");
 
     switch (Navigation)
     {
-    case 'A':
-        Emergency_stop();
-        Running_start();
+    case 'Q':
+        nextevent = Emergency_stop();
+        FSM_AddEvent(nextevent);
+        break;
+    case 'O':
+        // Other things here that are Emergency related
+        break;
+    default:
+        DSPshow(1,"Invalid input!\nPlease try again!");
         break;
     }
     // To Do
@@ -504,6 +519,7 @@ event_t Resume(void)
 
 event_t Emergency(void)
 {
+    // Trigger alarms and emergency things here.
     Speed = 0;
     Inc = 0;
 
@@ -512,6 +528,8 @@ event_t Emergency(void)
 
 event_t Emergency_stop(void)
 {
+    // Reset emergency triggers here
+    // Stop alarm also here
     return (E_EMERGENCY_STOP);
 }
 
