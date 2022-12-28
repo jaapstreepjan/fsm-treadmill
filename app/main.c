@@ -186,8 +186,6 @@ void S_Default_onEntry(void)
     state = FSM_GetState();
     DCSdebugSystemInfo("Current state: %s", stateEnumToText[state]);
 
-    event_t nextevent;
-
     // Display information for user
     DSPshow(2,"\tSpeed: %.1f Km/H\n"
               "\tInclination: %.1f %%\n"
@@ -195,6 +193,7 @@ void S_Default_onEntry(void)
               "\tSystem ready!\n", Speed, Inc, Distance);
 
     // Show user options
+    event_t nextevent;
     int Navigation;
     Navigation = DCSsimulationSystemInputChar("\nPress P to Pause."
                                               "\nPress C to change config."
@@ -232,35 +231,37 @@ void S_Default_onExit(void)
 
 void S_Diagnostics_onEntry(void)
 {
-    event_t nextevent;
-
-    nextevent = Diagnostics_start();
-
-    FSM_AddEvent(nextevent);
-
-    DSPshow(2,"\tSpeed: %.1f Km/H\n"
-              "\tInclination: %.1f %%\n"
-              "\tDistance: %.1f M\n"
-              "\tSystem in Diagnostic mode.\n"
-              "\tCleared for maintenance duties.\n", Speed, Inc, Distance);
-
+    // Show current state
     state_t state;
     state = FSM_GetState();
     DCSdebugSystemInfo("Current state: %s", stateEnumToText[state]);
 
-    int Navigation;
+    // Show user information
+    DSPshow(2,"\tSpeed: %.1f Km/H\n"
+              "\tInclination: %.1f %%\n"
+              "\tDistance: %.1f M\n"
+              "\tDiagnostic mode\n"
+              "\tCleared for maintenance duties.\n", Speed, Inc, Distance);
 
-    Navigation  = DCSsimulationSystemInputChar("\nPress A to return to default operations.", "A");
+    // Show user options
+    event_t nextevent;
+    int Navigation;
+    Navigation  = DCSsimulationSystemInputChar("\n"
+                                               "Press O for Other things\n"
+                                               "Press Q to Quit diagnostics\n",
+                                               "Q" "O");
 
     switch (Navigation)
     {
-    case 'A':
-        Diagnostics_stop();
-        S_Default_onEntry();
+    case 'Q':
+        nextevent = Diagnostics_stop();
+        FSM_AddEvent(nextevent);
+        break;
+    case 'O':
+        // Other things here that are Diagnostics related
         break;
     default:
-        //        Diagnostics_stop();           // Niet nodig?
-        //        S_Default_onEntry();          //
+        DSPshow(1,"Invalid input!\nPlease try again!");
         break;
     }
 }
@@ -436,6 +437,8 @@ event_t Diagnostics_start(void)
 
 event_t Diagnostics_stop(void)
 {
+    // Stop diagnostics and go to default state
+    // Maybe restore default running configuration?
     Speed = 0.8;
     Inc = 0;
     Distance = 0;
