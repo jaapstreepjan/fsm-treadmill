@@ -180,7 +180,12 @@ void S_Standby_onExit(void)
 
 void S_Default_onEntry(void)
 {
+    // Show current state
     state_t state;
+    state = FSM_GetState();
+    DCSdebugSystemInfo("Current state: %s", stateEnumToText[state]);
+
+    event_t nextevent;
 
     // Display information for user
     DSPshow(2,"\tSpeed: %.1f Km/H\n"
@@ -188,34 +193,31 @@ void S_Default_onEntry(void)
               "\tDistance: %.1f M\n"
               "\tSystem ready!\n", Speed, Inc, Distance);
 
-    state = FSM_GetState();
-    DCSdebugSystemInfo("Current state: %s", stateEnumToText[state]);
-
+    // Show user options
     int Navigation;
-
-    Navigation = DCSsimulationSystemInputChar("\nPress A to Pause."
-                                              "\nPress B to change config."
-                                              "\nPress C to trigger emergency."
+    Navigation = DCSsimulationSystemInputChar("\nPress P to Pause."
+                                              "\nPress C to change config."
+                                              "\nPress E to trigger emergency."
                                               "\nPress Q to stop running",
-                                              "A" "B" "C" "Q");
+                                              "P" "C" "E" "Q");
 
     switch (Navigation)
     {
-    case 'A':
-        Pause();
-        S_Pause_onEntry();
-        break;
-    case 'B':
-        Config_Change();
-        S_Alterconfig_onEntry();
+    case 'P':
+        nextevent = Pause();
+        FSM_AddEvent(nextevent);
         break;
     case 'C':
-        Emergency();
-        S_Emergency_onEntry();
+        nextevent = Config_Change();
+        FSM_AddEvent(nextevent);
+        break;
+    case 'E':
+        nextevent = Emergency();
+        FSM_AddEvent(nextevent);
         break;
     case 'Q':
-        Running_stop();
-        // maybe something else here
+        nextevent = Running_stop();
+        FSM_AddEvent(nextevent);
     default:
         DSPshow(1,"Invalid input!\nPlease try again!");
         break;
@@ -330,9 +332,32 @@ void S_Emergency_onExit(void)
 
 void S_Pause_onEntry(void)
 {
+    // Show current state
+    state_t state;
+    state = FSM_GetState();
+    DCSdebugSystemInfo("Current state: %s", stateEnumToText[state]);
+
+    // Initialize variables
     event_t nextevent;
-    nextevent = Pause();
-    FSM_AddEvent(nextevent);
+    int response;
+
+    // Show user information
+    DSPshow(2,"Treadmill paused.");
+    response = DCSsimulationSystemInputChar("Press C to continue", "C");
+
+    switch (response)
+    {
+    case 'C':
+        DSPshow(3,"Resuming operations");
+        nextevent = Resume();
+        FSM_AddEvent(nextevent);
+        break;
+    default:
+        DCSdebugSystemInfo("Undefined this should not happen");
+        DCSdebugSystemInfo("Go to emergency state");
+        nextevent = Emergency();
+        FSM_AddEvent(nextevent);
+    }
 }
 
 // Subsystem (simulation) functions
@@ -426,34 +451,14 @@ event_t Running_stop(void)
 
 event_t Pause(void)
 {
-/*    TEMP = Speed ;
+    // Set speed of treadmill to zero. Keep other options the same.
+    TEMP = Speed ;
     Speed = 0;
     Inc = Inc;
     Distance = Distance;
+
+    // Let FSM framework know we're done with the event
     return (E_PAUSE);
-*/
-
-    // New 27 december
-    DSPshow(2,"Treadmill paused.");
-
-    int response;
-    response = DCSsimulationSystemInputChar("Press A to continue", "A");
-
-    state = FSM_GetState();
-    DCSdebugSystemInfo("Current state: %s", stateEnumToText[state]);
-
-    switch (response)
-    {
-       case 'A':
-          DSPshow(3,"Resuming operations");
-          return(E_RESUME);
-          break;
-       default:
-          DCSdebugSystemInfo("Undefined this should not happen");
-          DCSdebugSystemInfo("Return with event E_EXCEPTION");
-          DCSdebugSystemInfo("next state is undefined");
-          return(E_EMERGENCY_START);
-    }
 }
 
 event_t Resume(void)
