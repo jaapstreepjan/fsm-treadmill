@@ -14,7 +14,6 @@
  * behavior of a treadmill, which can be useful for understanding how the
  * treadmill works, testing its performance, and potentially even improving
  * its design.
- *
  */
 
 // Standard C libraries
@@ -56,8 +55,10 @@ extern char * stateEnumToText[];
 event_t event;
 state_t state;
 
-// Local function prototypes State related
+// Function prototypes related to code efficiency
+void showCurrentState(void);
 
+// Local function prototypes State related
 void S_Init_onEntry(void);
 void S_Init_onExit(void);
 //void S_Locked_onEntry(void);      // LEGACY
@@ -105,7 +106,6 @@ void delay_us(uint32_t d);
 // Main
 int main(void)
 {
-
     // Define the state machine model
     // First the state and the pointer to the onEntry and onExit functions
     //           State                            onEntry()              onExit()
@@ -159,10 +159,7 @@ void S_Init_onEntry(void)
 
 void S_Standby_onEntry(void)
 {
-    // Show current state
-    state_t state;
-    state = FSM_GetState();
-    DCSdebugSystemInfo("New state: %s", stateEnumToText[state]);
+    showCurrentState();
 
     // Display information for user
     DSPshow(2,"\tSpeed: %.1f Km/H\n"
@@ -201,10 +198,7 @@ void S_Standby_onExit(void)
 
 void S_Default_onEntry(void)
 {
-    // Show current state
-    state_t state;
-    state = FSM_GetState();
-    DCSdebugSystemInfo("New state: %s", stateEnumToText[state]);
+    showCurrentState();
 
     // Display information for user
     DSPshow(2,"\tSpeed: %.1f Km/H\n"
@@ -252,10 +246,7 @@ void S_Default_onExit(void)
 
 void S_Diagnostics_onEntry(void)
 {
-    // Show current state
-    state_t state;
-    state = FSM_GetState();
-    DCSdebugSystemInfo("New state: %s", stateEnumToText[state]);
+    showCurrentState();
 
     // Show user information
     DSPshow(2,"\tSpeed: %.1f Km/H\n"
@@ -294,10 +285,7 @@ void S_Diagnostics_onExit(void)
 
 void S_Alterconfig_onEntry(void)
 {
-    // Show current state
-    state_t state;
-    state = FSM_GetState();
-    DCSdebugSystemInfo("New state: %s", stateEnumToText[state]);
+    showCurrentState();
 
     // Display information for user
     DSPshow(2,"\tSpeed: %.1f Km/H\n"
@@ -348,10 +336,7 @@ void S_Alterconfig_onExit(void)
 
 void S_Emergency_onEntry(void)
 {
-    // Show current state
-    state_t state;
-    state = FSM_GetState();
-    DCSdebugSystemInfo("Current state: %s", stateEnumToText[state]);
+    showCurrentState();
 
     // Show user information
     DSPshow(2,"\tSpeed: %.1f Km/H\n"
@@ -391,10 +376,7 @@ void S_Emergency_onExit(void)
 
 void S_Pause_onEntry(void)
 {
-    // Show current state
-    state_t state;
-    state = FSM_GetState();
-    DCSdebugSystemInfo("Current state: %s", stateEnumToText[state]);
+    showCurrentState;
 
     // Initialize variables
     event_t nextevent;
@@ -422,167 +404,134 @@ void S_Pause_onEntry(void)
 // Subsystem (simulation) functions
 event_t InitialiseSubsystems(void)
 {
-    state_t state;
+    // state_t state;       // Deze moet misschien blijven staan?
     DSPinitialise();
     DSPshowDisplay();
     KYBinitialise();
 
-    state = FSM_GetState();
-    DCSdebugSystemInfo("Old state: %s", stateEnumToText[state]);
     DSPshow(2,"System Initialized No errors");
 
+    showCurrentState();
     return(E_TREADMILL);        // Volgens mij moet dit E_INIT zijn, maar dan werkt het niet
 }
 
+// Event for transitioning from S_INIT to S_STANDBY
 event_t	Treadmill(void)
 {
-    // Show current state
-    state_t state;
-    state = FSM_GetState();
-    DCSdebugSystemInfo("Old state: %s", stateEnumToText[state]);
+    // Startup phase here
 
+    showCurrentState();
     return (E_TREADMILL);
 }
 
+// Event function for transitioning from S_DEFAULT to S_DIAGNOSTICS
 event_t EF_DIAGNOSTICS_START(void)
 {
-    // Show current state
-    state_t state;
-    state = FSM_GetState();
-    DCSdebugSystemInfo("Old state: %s", stateEnumToText[state]);
-
-    // Start diagnostics state.
+    // Trigger diagnostic things here
     // Set incline, speed and distance to zero.
     Speed = 0;
     Inc = 0;
     Distance = 0;
 
+    showCurrentState();
     return (E_DIAGNOSTICS_START);
 }
 
+// Event functoin for transitioning from S_DIAGNOSTICS to S_DEFAULT
 event_t EF_DIAGNOSTICS_STOP(void)
 {
-    // Show current state
-    state_t state;
-    state = FSM_GetState();
-    DCSdebugSystemInfo("Old state: %s", stateEnumToText[state]);
-
     // Stop diagnostics and go to default state
     // Maybe restore default running configuration?
     Speed = 0.8;
     Inc = 0;
     Distance = 0;
 
+    showCurrentState();
     return (E_DIAGNOSTICS_STOP);
 }
 
+// Event function for transitioning from S_STANDBY to S_DEFAULT
 event_t EF_RUNNING_START(void)
 {
-    // Show current state
-    state_t state;
-    state = FSM_GetState();
-    DCSdebugSystemInfo("Old state: %s", stateEnumToText[state]);
-
     // setting starting values
     Speed = 0.8;
     Inc = 0;
     Distance = 0;
 
+    showCurrentState();
     return (E_RUNNING_START);
-
-    //S_Default_onEntry();
 }
 
+// Event function for transitioning from S_DEFAULT to S_STANDBY
 event_t EF_RUNNING_STOP(void)
 {
-    // Show current state
-    state_t state;
-    state = FSM_GetState();
-    DCSdebugSystemInfo("Old state: %s", stateEnumToText[state]);
-
     // stopping treadmill with this function
     Speed = 0;
     Inc = 0;
 
+    showCurrentState();
     return (E_RUNNING_STOP);
 }
 
+// Event function for transitioning from S_DEFAULT to S_PAUSE
 event_t EF_PAUSE(void)
-{
-    // Show current state
-    state_t state;
-    state = FSM_GetState();
-    DCSdebugSystemInfo("Old state: %s", stateEnumToText[state]);
-
+{    
     // Set speed of treadmill to zero. Keep other options the same.
     TEMP = Speed ;
     Speed = 0;
     Inc = Inc;
     Distance = Distance;
 
-    // Let FSM framework know we're done with the event
+    showCurrentState();
     return (E_PAUSE);
 }
 
+// Event function for transitioning from S_PAUSE to S_DEFAULT
 event_t EF_RESUME(void)
 {
-    // Show current state
-    state_t state;
-    state = FSM_GetState();
-    DCSdebugSystemInfo("Old state: %s", stateEnumToText[state]);
-
     // Restore user configured speed here
     Speed = TEMP;
     TEMP = 0;
 
+    showCurrentState();
     return (E_RESUME);
 }
 
+// Event function for transitioning from S_DEFAULT to S_EMERGENCY
 event_t EF_EMERGENCY_START(void)
 {
-    // Show current state
-    state_t state;
-    state = FSM_GetState();
-    DCSdebugSystemInfo("Old state: %s", stateEnumToText[state]);
-
     // Trigger alarms and emergency things here.
     Speed = 0;
     Inc = 0;
 
+    showCurrentState();
     return (E_EMERGENCY_START);
 }
 
+// Event function from transitioning from S_EMERGENCY to S_DEFAULT
 event_t EF_EMERGENCY_STOP(void)
 {
-    // Show current state
-    state_t state;
-    state = FSM_GetState();
-    DCSdebugSystemInfo("Old state: %s", stateEnumToText[state]);
-
     // Reset emergency triggers here
     // Stop alarm also here
+
+    showCurrentState();
     return (E_EMERGENCY_STOP);
 }
 
+// Function for transtitioning from state default to state alterConfig
 event_t EF_CONFIG_CHANGE(void)
 {
-    // Show current state
-    state_t state;
-    state = FSM_GetState();
-    DCSdebugSystemInfo("Old state: %s", stateEnumToText[state]);
-
+    // Allow changes to happen to configuration
+    showCurrentState();
     return (E_CONFIG_CHANGE);
 }
 
+// Function for transitioning from state alterConfig to state default
 event_t EF_CONFIG_DONE(void)
 {
-    // Show current state
-    state_t state;
-    state = FSM_GetState();
-    DCSdebugSystemInfo("Old state: %s", stateEnumToText[state]);
+    // Commit changes to saved configuration HERE
 
-    // Commit changes to saved configuration
-
+    showCurrentState();
     return (E_CONFIG_DONE);
 }
 
@@ -591,4 +540,17 @@ void delay_us(uint32_t d)
 {
     DCSdebugSystemInfo("Delay waiting for %d micro-seconds", d);
     sleep(10000);
+}
+
+// Function for showing the state to end user for debugging purposes.
+void showCurrentState(void)
+{
+    // initialize needed variable
+    state_t state;
+
+    // fetch current state from FSM-framework
+    state = FSM_GetState();
+
+    // Show current state to user
+    DCSdebugSystemInfo("State: %s", stateEnumToText[state]);
 }
