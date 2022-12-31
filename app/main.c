@@ -18,7 +18,9 @@
 
 // Standard C libraries
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 
 // Finite State Machine library
 #include "fsm_functions/fsm.h"
@@ -36,7 +38,7 @@ typedef enum {
     ALTERCONFIG,
     PAUSE,
     EMERGENCY,
-} treadmillStatus_t; // Need to find out what this is used for.
+} treadmillStatus_t; // Need to find out what this is used for. Comment Colin: Name of the enum.
 
 char * treadmillStatusToText[] =
 {
@@ -49,6 +51,19 @@ char * treadmillStatusToText[] =
     "EMERGENCY",
 };
 
+// Struct for vallues. Comment Colin: couldn't find out how to pass refferense to state. had to resolve to global struct. if time allow fix.
+struct Variables
+{
+    float
+    Speed,
+    Inc,
+    Distance,
+    TSpeed,
+    TInc;
+};
+
+struct Variables MyStruct;
+
 extern char * eventEnumToText[];
 extern char * stateEnumToText[];
 
@@ -57,12 +72,14 @@ state_t state;
 
 // Function prototypes related to code efficiency
 void showCurrentState(void);
+void SaveStat(void);
+void GetStat(void);
+void UpdateDis(void);
+void ResetStat(void);
 
 // Local function prototypes State related
 void S_Init_onEntry(void);
 void S_Init_onExit(void);
-//void S_Locked_onEntry(void);      // LEGACY
-//void S_Unlocked_onEntry(void);    // LEGACY
 void S_Standby_onEntry(void);
 void S_Standby_onExit(void);
 void S_Default_onEntry(void);
@@ -75,13 +92,6 @@ void S_Emergency_onEntry(void);
 void S_Emergency_onExit(void);
 void S_Pause_onEntry(void);
 void S_Pause_onExit(void);
-
-// Global used viarable
-// Deze naar main verplaatsen?
-float Speed;
-float Inc;
-float Distance;
-float TEMP;
 
 // Subsystem initialization (simulation) functions
 event_t InitialiseSubsystems(void);
@@ -106,6 +116,9 @@ void delay_us(uint32_t d);
 // Main
 int main(void)
 {
+    // sets all vallues to 0
+    ResetStat();
+
     // Define the state machine model
     // First the state and the pointer to the onEntry and onExit functions
     //           State                            onEntry()              onExit()
@@ -145,6 +158,7 @@ int main(void)
     return 0;
 }
 
+
 // Local function prototypes State related
 
 void S_Init_onEntry(void)
@@ -165,7 +179,7 @@ void S_Standby_onEntry(void)
     DSPshow(2,"\tSpeed: %.1f Km/H\n"
               "\tInclination: %.1f %%\n"
               "\tDistance: %.1f M\n"
-              "\tChange configuration.\n", Speed, Inc, Distance);
+              "\tChange configuration.\n", MyStruct.Speed, MyStruct.Inc, MyStruct.Distance);
 
     // Show user options
     event_t nextevent;
@@ -204,7 +218,7 @@ void S_Default_onEntry(void)
     DSPshow(2,"\tSpeed: %.1f Km/H\n"
               "\tInclination: %.1f %%\n"
               "\tDistance: %.1f M\n"
-              "\tSystem ready!\n", Speed, Inc, Distance);
+              "\tSystem ready!\n", MyStruct.Speed, MyStruct.Inc, MyStruct.Distance);
 
     // Show user options
     event_t nextevent;
@@ -253,7 +267,7 @@ void S_Diagnostics_onEntry(void)
               "\tInclination: %.1f %%\n"
               "\tDistance: %.1f M\n"
               "\tDiagnostic mode\n"
-              "\tCleared for maintenance duties.\n", Speed, Inc, Distance);
+              "\tCleared for maintenance duties.\n", MyStruct.Speed, MyStruct.Inc, MyStruct.Distance);
 
     // Show user options
     event_t nextevent;
@@ -291,7 +305,7 @@ void S_Alterconfig_onEntry(void)
     DSPshow(2,"\tSpeed: %.1f Km/H\n"
               "\tInclination: %.1f %%\n"
               "\tDistance: %.1f M\n"
-              "\tChange configuration.\n", Speed, Inc, Distance);
+              "\tChange configuration.\n", MyStruct.Speed, MyStruct.Inc, MyStruct.Distance);
 
     // Show user information
     int Navigation;
@@ -304,16 +318,42 @@ void S_Alterconfig_onEntry(void)
                                               "S" "I" "D" "E" "C");
 
     event_t nextevent;
+    char input[10]; // input buffer
+
     switch (Navigation)
     {
     case 'S':
         // change speed here
+        printf("Enter a float value: ");
+        fgets(input, sizeof(input), stdin); // get user input
+
+        MyStruct.Speed = atof(input); // convert input string to float and assign to struct value
+
+        printf("Struct value: %f\n", MyStruct.Speed);
+
+        S_Alterconfig_onEntry();
         break;
     case 'I':
         // chagne Incline here
+        printf("Enter a float value: ");
+        fgets(input, sizeof(input), stdin); // get user input
+
+        MyStruct.Inc = atof(input); // convert input string to float and assign to struct value
+
+        printf("Struct value: %f\n", MyStruct.Inc);
+
+        S_Alterconfig_onEntry();
         break;
     case 'D':
-        // change Distance here
+        // chagne Incline here
+        printf("Enter a float value: ");
+        fgets(input, sizeof(input), stdin); // get user input
+
+        MyStruct.Distance = atof(input); // convert input string to float and assign to struct value
+
+        printf("Struct value: %f\n", MyStruct.Distance);
+
+        S_Alterconfig_onEntry();
         break;
     case 'E':
         nextevent = EF_EMERGENCY_START();
@@ -343,7 +383,7 @@ void S_Emergency_onEntry(void)
               "\tInclination: %.1f %%\n"
               "\tDistance: %.1f M\n"
               "\tEmergency mode\n",
-            Speed, Inc, Distance);
+            MyStruct.Speed, MyStruct.Inc, MyStruct.Distance);
 
     // Show user options
     event_t nextevent;
@@ -360,13 +400,14 @@ void S_Emergency_onEntry(void)
         FSM_AddEvent(nextevent);
         break;
     case 'O':
+        printf("This is a Simulated error log, Reseting to Emergency");
+        S_Emergency_onEntry();
         // Other things here that are Emergency related
         break;
     default:
         DSPshow(1,"Invalid input!\nPlease try again!");
         break;
     }
-    // To Do
 }
 
 void S_Emergency_onExit(void)
@@ -376,7 +417,7 @@ void S_Emergency_onExit(void)
 
 void S_Pause_onEntry(void)
 {
-    showCurrentState;
+    showCurrentState();
 
     // Initialize variables
     event_t nextevent;
@@ -404,7 +445,7 @@ void S_Pause_onEntry(void)
 // Subsystem (simulation) functions
 event_t InitialiseSubsystems(void)
 {
-    // state_t state;       // Deze moet misschien blijven staan?
+    // state_t state;       // Deze moet misschien blijven staan? Comment Colin: exces function? look if time allows.
     DSPinitialise();
     DSPshowDisplay();
     KYBinitialise();
@@ -429,9 +470,7 @@ event_t EF_DIAGNOSTICS_START(void)
 {
     // Trigger diagnostic things here
     // Set incline, speed and distance to zero.
-    Speed = 0;
-    Inc = 0;
-    Distance = 0;
+    SaveStat();
 
     showCurrentState();
     return (E_DIAGNOSTICS_START);
@@ -441,10 +480,8 @@ event_t EF_DIAGNOSTICS_START(void)
 event_t EF_DIAGNOSTICS_STOP(void)
 {
     // Stop diagnostics and go to default state
-    // Maybe restore default running configuration?
-    Speed = 0.8;
-    Inc = 0;
-    Distance = 0;
+    // restore default running configuration
+    GetStat();
 
     showCurrentState();
     return (E_DIAGNOSTICS_STOP);
@@ -453,10 +490,10 @@ event_t EF_DIAGNOSTICS_STOP(void)
 // Event function for transitioning from S_STANDBY to S_DEFAULT
 event_t EF_RUNNING_START(void)
 {
+    // Allows acces to Variables in Struct Note:Use s1. before variable
     // setting starting values
-    Speed = 0.8;
-    Inc = 0;
-    Distance = 0;
+    MyStruct.Speed = 0.8;
+    MyStruct.Inc = 0;
 
     showCurrentState();
     return (E_RUNNING_START);
@@ -466,8 +503,7 @@ event_t EF_RUNNING_START(void)
 event_t EF_RUNNING_STOP(void)
 {
     // stopping treadmill with this function
-    Speed = 0;
-    Inc = 0;
+    SaveStat();
 
     showCurrentState();
     return (E_RUNNING_STOP);
@@ -477,10 +513,7 @@ event_t EF_RUNNING_STOP(void)
 event_t EF_PAUSE(void)
 {    
     // Set speed of treadmill to zero. Keep other options the same.
-    TEMP = Speed ;
-    Speed = 0;
-    Inc = Inc;
-    Distance = Distance;
+    SaveStat();
 
     showCurrentState();
     return (E_PAUSE);
@@ -490,8 +523,7 @@ event_t EF_PAUSE(void)
 event_t EF_RESUME(void)
 {
     // Restore user configured speed here
-    Speed = TEMP;
-    TEMP = 0;
+    GetStat();
 
     showCurrentState();
     return (E_RESUME);
@@ -501,8 +533,7 @@ event_t EF_RESUME(void)
 event_t EF_EMERGENCY_START(void)
 {
     // Trigger alarms and emergency things here.
-    Speed = 0;
-    Inc = 0;
+    GetStat();
 
     showCurrentState();
     return (E_EMERGENCY_START);
@@ -513,6 +544,7 @@ event_t EF_EMERGENCY_STOP(void)
 {
     // Reset emergency triggers here
     // Stop alarm also here
+    SaveStat();
 
     showCurrentState();
     return (E_EMERGENCY_STOP);
@@ -553,4 +585,44 @@ void showCurrentState(void)
 
     // Show current state to user
     DCSdebugSystemInfo("State: %s", stateEnumToText[state]);
+}
+
+// Function for keeping track of current stats
+void SaveStat(void)
+{
+    // Setting current vallue in Temp for later pull.
+    MyStruct.TSpeed = MyStruct.Speed;
+    MyStruct.TInc = MyStruct.Inc;
+
+    MyStruct.Speed = 0;
+    MyStruct.Inc = 0;
+}
+
+// Function for returning saved stats
+void GetStat(void)
+{
+    // Pulling Vallues from Temps.
+    MyStruct.Speed = MyStruct.TSpeed;
+    MyStruct.Inc = MyStruct.TInc;
+
+    MyStruct.TSpeed = 0;
+    MyStruct.TInc = 0;
+}
+
+// Function for keeping track of distance
+void UpdateDis(void)
+{
+    // unfortionatly duo to time constrains this function will not be impletemented
+    // my knowledge of keeping track of timers in C is limeted and will take to long to learn/ implement in thi project. (Colin)
+}
+
+// Function for Resetting all stats
+void ResetStat(void)
+{
+    // Allows acces to Variables in Struct Note:Use Ptr -> before variable
+    MyStruct.TSpeed = 0;
+    MyStruct.TInc = 0;
+    MyStruct.Speed =0;
+    MyStruct.Inc =0;
+    MyStruct.Distance =0;
 }
