@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <time.h>
 
 // Finite State Machine library
 #include "fsm_functions/fsm.h"
@@ -64,6 +65,10 @@ struct Variables
 
 struct Variables MyStruct;
 
+// Declare variables for the start and end times
+time_t start_time, end_time;
+double elapsed_time;
+
 extern char * eventEnumToText[];
 extern char * stateEnumToText[];
 
@@ -72,10 +77,12 @@ state_t state;
 
 // Function prototypes related to code efficiency
 void showCurrentState(void);
-void SaveStat(void);
-void GetStat(void);
-void UpdateDis(void);
-void ResetStat(void);
+void Save_Stat(void);
+void Get_Stat(void);
+void Update_Dis(void);
+void Reset_Stat(void);
+void Keep_Time_Start(void);
+void Keep_Time_Stop(void);
 
 // Local function prototypes State related
 void S_Init_onEntry(void);
@@ -117,7 +124,7 @@ void delay_us(uint32_t d);
 int main(void)
 {
     // sets all vallues to 0
-    ResetStat();
+    Reset_Stat();
 
     // Define the state machine model
     // First the state and the pointer to the onEntry and onExit functions
@@ -212,6 +219,9 @@ void S_Standby_onExit(void)
 
 void S_Default_onEntry(void)
 {
+    // start timer to keep track of time
+    Keep_Time_Start();
+
     showCurrentState();
 
     // Display information for user
@@ -233,18 +243,34 @@ void S_Default_onEntry(void)
     switch (Navigation)
     {
     case 'P':
+        // Function call to update Distance based on time.
+        Keep_Time_Stop();
+        Update_Dis();
+
         nextevent = EF_PAUSE();
         FSM_AddEvent(nextevent);
         break;
     case 'C':
+        // Function call to update Distance based on time.
+        Keep_Time_Stop();
+        Update_Dis();
+
         nextevent = EF_CONFIG_CHANGE();
         FSM_AddEvent(nextevent);
         break;
     case 'E':
+        // Function call to update Distance based on time.
+        Keep_Time_Stop();
+        Update_Dis();
+
         nextevent = EF_EMERGENCY_START();
         FSM_AddEvent(nextevent);
         break;
     case 'Q':
+        // Function call to update Distance based on time.
+        Keep_Time_Stop();
+        Update_Dis();
+
         nextevent = EF_RUNNING_STOP();
         FSM_AddEvent(nextevent);
     default:
@@ -299,6 +325,9 @@ void S_Diagnostics_onExit(void)
 
 void S_Alterconfig_onEntry(void)
 {
+    // start timer to keep track of time
+    Keep_Time_Start();
+
     showCurrentState();
 
     // Display information for user
@@ -356,10 +385,18 @@ void S_Alterconfig_onEntry(void)
         S_Alterconfig_onEntry();
         break;
     case 'E':
+        // Function call to update Distance based on time.
+        Keep_Time_Stop();
+        Update_Dis();
+
         nextevent = EF_EMERGENCY_START();
         FSM_AddEvent(nextevent);
         break;
     case 'C':
+        // Function call to update Distance based on time.
+        Keep_Time_Stop();
+        Update_Dis();
+
         nextevent = EF_CONFIG_DONE();
         FSM_AddEvent(nextevent);
         break;
@@ -470,7 +507,7 @@ event_t EF_DIAGNOSTICS_START(void)
 {
     // Trigger diagnostic things here
     // Set incline, speed and distance to zero.
-    SaveStat();
+    Save_Stat();
 
     showCurrentState();
     return (E_DIAGNOSTICS_START);
@@ -481,7 +518,7 @@ event_t EF_DIAGNOSTICS_STOP(void)
 {
     // Stop diagnostics and go to default state
     // restore default running configuration
-    GetStat();
+    Get_Stat();
 
     showCurrentState();
     return (E_DIAGNOSTICS_STOP);
@@ -503,7 +540,7 @@ event_t EF_RUNNING_START(void)
 event_t EF_RUNNING_STOP(void)
 {
     // stopping treadmill with this function
-    SaveStat();
+    Save_Stat();
 
     showCurrentState();
     return (E_RUNNING_STOP);
@@ -513,7 +550,7 @@ event_t EF_RUNNING_STOP(void)
 event_t EF_PAUSE(void)
 {    
     // Set speed of treadmill to zero. Keep other options the same.
-    SaveStat();
+    Save_Stat();
 
     showCurrentState();
     return (E_PAUSE);
@@ -523,7 +560,7 @@ event_t EF_PAUSE(void)
 event_t EF_RESUME(void)
 {
     // Restore user configured speed here
-    GetStat();
+    Get_Stat();
 
     showCurrentState();
     return (E_RESUME);
@@ -533,7 +570,7 @@ event_t EF_RESUME(void)
 event_t EF_EMERGENCY_START(void)
 {
     // Trigger alarms and emergency things here.
-    GetStat();
+    Get_Stat();
 
     showCurrentState();
     return (E_EMERGENCY_START);
@@ -544,7 +581,7 @@ event_t EF_EMERGENCY_STOP(void)
 {
     // Reset emergency triggers here
     // Stop alarm also here
-    SaveStat();
+    Save_Stat();
 
     showCurrentState();
     return (E_EMERGENCY_STOP);
@@ -588,7 +625,7 @@ void showCurrentState(void)
 }
 
 // Function for keeping track of current stats
-void SaveStat(void)
+void Save_Stat(void)
 {
     // Setting current vallue in Temp for later pull.
     MyStruct.TSpeed = MyStruct.Speed;
@@ -599,7 +636,7 @@ void SaveStat(void)
 }
 
 // Function for returning saved stats
-void GetStat(void)
+void Get_Stat(void)
 {
     // Pulling Vallues from Temps.
     MyStruct.Speed = MyStruct.TSpeed;
@@ -610,14 +647,20 @@ void GetStat(void)
 }
 
 // Function for keeping track of distance
-void UpdateDis(void)
+void Update_Dis(void)
 {
+    float TDistance;
     // unfortionatly duo to time constrains this function will not be impletemented
     // my knowledge of keeping track of timers in C is limeted and will take to long to learn/ implement in thi project. (Colin)
+
+
+    TDistance = elapsed_time * (MyStruct.Speed / 360);
+    MyStruct.Distance = MyStruct.Distance + TDistance;
+    TDistance = 0;
 }
 
 // Function for Resetting all stats
-void ResetStat(void)
+void Reset_Stat(void)
 {
     // Allows acces to Variables in Struct Note:Use Ptr -> before variable
     MyStruct.TSpeed = 0;
@@ -625,4 +668,19 @@ void ResetStat(void)
     MyStruct.Speed =0;
     MyStruct.Inc =0;
     MyStruct.Distance =0;
+}
+
+void Keep_Time_Start(void)
+{
+       // Record the start time
+       time(&start_time);
+}
+
+void Keep_Time_Stop(void)
+{
+    // Record the end time
+    time(&end_time);
+
+    // Calculate the elapsed time
+    elapsed_time = difftime(end_time, start_time);
 }
