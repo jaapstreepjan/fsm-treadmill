@@ -23,9 +23,9 @@ As student embedded systems engineers, understanding the concept of finite state
 
 * Clear empty functions (Colin)
 * Document code with doxygen (JJ)
-* Finish product document (test document) 
-* Check and correct code based on style guidelines 
-* Check points on assesment form
+* Finish product document (test document) (JJ)
+* Check and correct code based on style guidelines (Colin) 
+* Check points on assesment form (Colin & JJ)
 
 ### Deadline
 Uiterlijk 5 Januari 2022 Programma opleveren en waarna de assesments worden ingepland
