@@ -21,6 +21,12 @@ As student embedded systems engineers, understanding the concept of finite state
 | Week 6     | Implementatie in de software                                                                                                                |
 | Week 7     | Afronden en testen programma. Product rapport afronden                                                                                      |
 
+* Clear empty functions (Colin)
+* Document code with doxygen (JJ)
+* Finish product document (test document) 
+* Check and correct code based on style guidelines 
+* Check points on assesment form
+
 ### Deadline
 Uiterlijk 5 Januari 2022 Programma opleveren en waarna de assesments worden ingepland
 
