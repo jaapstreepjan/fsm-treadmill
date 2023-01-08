@@ -654,7 +654,7 @@ void Update_Dis(void)
     // my knowledge of keeping track of timers in C is limeted and will take to long to learn/ implement in thi project. (Colin)
 
 
-    TDistance = elapsed_time * (MyStruct.Speed / 360);
+    TDistance = elapsed_time * (MyStruct.Speed / 3.6);
     MyStruct.Distance = MyStruct.Distance + TDistance;
     TDistance = 0;
 }
