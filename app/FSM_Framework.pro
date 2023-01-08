@@ -22,4 +22,6 @@ HEADERS += \
    events.h \
    fsm.h \
    fsm_functions/fsm.h \
-   states.h
+   prototypes.h \
+   states.h \
+   variables.h
