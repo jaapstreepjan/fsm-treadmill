@@ -16,26 +16,26 @@
  * its design.
  */
 
-// Standard C libraries
+/// Standard C libraries
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
 #include <time.h>
 
-// Finite State Machine library
+/// Finite State Machine library
 #include "fsm_functions/fsm.h"
 
-// Development Console libraries
+/// Development Console libraries
 #include "console_functions/keyboard.h"
 #include "console_functions/display.h"
 #include "console_functions/devConsole.h"
 
-// Protoypes and Variables
+/// Protoypes and Variables
 #include "prototypes.h"
 #include "variables.h"
 
-// Declare variables for the start and end times
+/// Declare variables for the start and end times
 time_t start_time, end_time;
 double elapsed_time;
 
@@ -45,11 +45,11 @@ extern char * stateEnumToText[];
 event_t event;
 state_t state;
 
-// Subsystem initialization (simulation) functions
+/// Subsystem initialization (simulation) functions
 event_t InitialiseSubsystems(void);
 
-// Subsystem1 (simulation) functions
-// EF_ prefix is used for Event Functions
+/// Subsystem1 (simulation) functions
+/// EF_ prefix is used for Event Functions
 event_t TREADMILL(void);
 event_t EF_RUNNING_START(void);
 event_t EF_RUNNING_STOP(void);
@@ -62,18 +62,18 @@ event_t EF_EMERGENCY_STOP(void);
 event_t EF_CONFIG_CHANGE(void);
 event_t EF_CONFIG_DONE(void);
 
-// Helper function example
+/// Helper function example
 void delay_us(uint32_t d);
 
-// Main
+/// Main
 int main(void)
 {
-    // sets all vallues to 0
+    /// sets all vallues to 0
     resetStat();
 
-    // Define the state machine model
-    // First the state and the pointer to the onEntry and onExit functions
-    //           State                            onEntry()              onExit()
+    /// Define the state machine model
+    /// First the state and the pointer to the onEntry and onExit functions
+    ///           State                            onEntry()              onExit()
     FSM_AddState(S_START,      &(state_funcs_t){  NULL,                  NULL                   });
     FSM_AddState(S_INIT,       &(state_funcs_t){  S_initOnEntry,        NULL                   });
     FSM_AddState(S_STANDBY,    &(state_funcs_t){  S_standbyOnEntry,     NULL                   });
@@ -83,8 +83,8 @@ int main(void)
     FSM_AddState(S_EMERGENCY,  &(state_funcs_t){  S_emergencyOnEntry,   NULL                   });
     FSM_AddState(S_PAUSE,      &(state_funcs_t){  S_pauseOnEntry,       NULL                   });
 
-    // Second the transitions
-    //                                 From           Event                To
+    /// Second the transitions
+    ///                                 From           Event                To
     FSM_AddTransition(&(transition_t){ S_START,       E_INIT,              S_INIT        });
     FSM_AddTransition(&(transition_t){ S_INIT,        E_TREADMILL,         S_STANDBY     });
     FSM_AddTransition(&(transition_t){ S_STANDBY,     E_RUNNING_START,     S_DEFAULT     });
@@ -102,17 +102,18 @@ int main(void)
 
     FSM_RunStateMachine(S_START, E_INIT);
 
-    // Use this test function to test your model
-    // FSM_RevertModel();
+    /// Use this test function to test your model
+    /// FSM_RevertModel();
 
-    //    FSM_FlushEnexpectedEvents(true);
+    ///    FSM_FlushEnexpectedEvents(true);
 
     return 0;
 }
 
 
-// Local function prototypes State related
+/// Local function prototypes State related
 
+/// Function for executing code when entering state S_INIT
 void S_initOnEntry(void)
 {
     event_t nextevent;
@@ -123,17 +124,18 @@ void S_initOnEntry(void)
     FSM_AddEvent(nextevent);           /// Internal generated event
 }
 
+/// Function for executing code when entering state S_STANDBY
 void S_standbyOnEntry(void)
 {
     showCurrentState();
 
-    // Display information for user
+    /// Display information for user
     DSPshow(2,"\tSpeed: %.1f Km/H\n"
               "\tInclination: %.1f %%\n"
               "\tDistance: %.1f M\n"
               "\tChange configuration.\n", myStruct.speed, myStruct.inc, myStruct.distance);
 
-    // Show user options
+    /// Show user options
     event_t nextevent;
     int navigation;
     navigation  = DCSsimulationSystemInputChar("\n"
@@ -143,34 +145,35 @@ void S_standbyOnEntry(void)
 
     switch (navigation)
     {
-    case 'D':       // Go to state S_DIAGNOSTICS
+    case 'D':       /// Go to state S_DIAGNOSTICS
         nextevent = EF_DIAGNOSTICS_START();
         FSM_AddEvent(nextevent);
         break;
-    case 'S':       // Go to state S_DEFAULT
+    case 'S':       /// Go to state S_DEFAULT
         nextevent = EF_RUNNING_START();
         FSM_AddEvent(nextevent);
         break;
-    default:        // Show warning here about invalid input
+    default:        /// Show warning here about invalid input
         DSPshow(1,"Invalid input!\nPlease try again!");
         break;
     }
 }
 
+/// Function for executing code when entering state S_DEFAULT
 void S_defaultOnEntry(void)
 {
-    // start timer to keep track of time
+    /// start timer to keep track of time
     keepTimeStart();
 
     showCurrentState();
 
-    // Display information for user
+    /// Display information for user
     DSPshow(2,"\tSpeed: %.1f Km/H\n"
               "\tInclination: %.1f %%\n"
               "\tDistance: %.1f M\n"
               "\tSystem ready!\n", myStruct.speed, myStruct.inc, myStruct.distance);
 
-    // Show user options
+    /// Show user options
     event_t nextevent;
     int navigation;
     navigation = DCSsimulationSystemInputChar("\n"
@@ -183,7 +186,7 @@ void S_defaultOnEntry(void)
     switch (navigation)
     {
     case 'P':
-        // Function call to update Distance based on time.
+        /// Function call to update Distance based on time.
         keepTimeStop();
         updateDis();
 
@@ -191,7 +194,7 @@ void S_defaultOnEntry(void)
         FSM_AddEvent(nextevent);
         break;
     case 'C':
-        // Function call to update Distance based on time.
+        /// Function call to update Distance based on time.
         keepTimeStop();
         updateDis();
 
@@ -199,7 +202,7 @@ void S_defaultOnEntry(void)
         FSM_AddEvent(nextevent);
         break;
     case 'E':
-        // Function call to update Distance based on time.
+        /// Function call to update Distance based on time.
         keepTimeStop();
         updateDis();
 
@@ -207,7 +210,7 @@ void S_defaultOnEntry(void)
         FSM_AddEvent(nextevent);
         break;
     case 'Q':
-        // Function call to update Distance based on time.
+        /// Function call to update Distance based on time.
         keepTimeStop();
         updateDis();
 
@@ -220,18 +223,19 @@ void S_defaultOnEntry(void)
     }
 }
 
+/// Function for executing code when entering state S_DIAGNOSTICS
 void S_diagnosticsOnEntry(void)
 {
     showCurrentState();
 
-    // Show user information
+    /// Show user information
     DSPshow(2,"\tSpeed: %.1f Km/H\n"
               "\tInclination: %.1f %%\n"
               "\tDistance: %.1f M\n"
               "\tDiagnostic mode\n"
               "\tCleared for maintenance duties.\n", myStruct.speed, myStruct.inc, myStruct.distance);
 
-    // Show user options
+    /// Show user options
     event_t nextevent;
     int navigation;
     navigation  = DCSsimulationSystemInputChar("\n"
@@ -246,7 +250,7 @@ void S_diagnosticsOnEntry(void)
         FSM_AddEvent(nextevent);
         break;
     case 'O':
-        // Other things here that are Diagnostics related
+        /// Other things here that are Diagnostics related
         break;
     default:
         DSPshow(1,"Invalid input!\nPlease try again!");
@@ -254,21 +258,21 @@ void S_diagnosticsOnEntry(void)
     }
 }
 
-
+/// Function for executing code when entering state S_ALTERCONFIG
 void S_alterconfigOnEntry(void)
 {
-    // start timer to keep track of time
+    /// start timer to keep track of time
     keepTimeStart();
 
     showCurrentState();
 
-    // Display information for user
+    /// Display information for user
     DSPshow(2,"\tSpeed: %.1f Km/H\n"
               "\tInclination: %.1f %%\n"
               "\tDistance: %.1f M\n"
               "\tChange configuration.\n", myStruct.speed, myStruct.inc, myStruct.distance);
 
-    // Show user information
+    /// Show user information
     int navigation;
     navigation = DCSsimulationSystemInputChar("\n"
                                               "Press S to change Speed\n"
@@ -279,45 +283,45 @@ void S_alterconfigOnEntry(void)
                                               "S" "I" "D" "E" "C");
 
     event_t nextevent;
-    char input[10]; // input buffer
+    char input[10]; /// input buffer
 
     switch (navigation)
     {
     case 'S':
-        // change speed here
+        /// change speed here
         printf("Enter a float value: ");
-        fgets(input, sizeof(input), stdin); // get user input
+        fgets(input, sizeof(input), stdin); /// get user input
 
-        myStruct.speed = atof(input); // convert input string to float and assign to struct value
+        myStruct.speed = atof(input); /// convert input string to float and assign to struct value
 
         printf("Struct value: %f\n", myStruct.speed);
 
         S_alterconfigOnEntry();
         break;
     case 'I':
-        // change Incline here
+        /// change Incline here
         printf("Enter a float value: ");
-        fgets(input, sizeof(input), stdin); // get user input
+        fgets(input, sizeof(input), stdin); /// get user input
 
-        myStruct.inc = atof(input); // convert input string to float and assign to struct value
+        myStruct.inc = atof(input); /// convert input string to float and assign to struct value
 
         printf("Struct value: %f\n", myStruct.inc);
 
         S_alterconfigOnEntry();
         break;
     case 'D':
-        // change Incline here
+        /// change Incline here
         printf("Enter a float value: ");
-        fgets(input, sizeof(input), stdin); // get user input
+        fgets(input, sizeof(input), stdin); /// get user input
 
-        myStruct.distance = atof(input); // convert input string to float and assign to struct value
+        myStruct.distance = atof(input); /// convert input string to float and assign to struct value
 
         printf("Struct value: %f\n", myStruct.distance);
 
         S_alterconfigOnEntry();
         break;
     case 'E':
-        // Function call to update Distance based on time.
+        /// Function call to update Distance based on time.
         keepTimeStop();
         updateDis();
 
@@ -325,7 +329,7 @@ void S_alterconfigOnEntry(void)
         FSM_AddEvent(nextevent);
         break;
     case 'C':
-        // Function call to update Distance based on time.
+        /// Function call to update Distance based on time.
         keepTimeStop();
         updateDis();
 
@@ -338,18 +342,19 @@ void S_alterconfigOnEntry(void)
     }
 }
 
+/// Function for executing code when entering state S_EMERGENCY
 void S_emergencyOnEntry(void)
 {
     showCurrentState();
 
-    // Show user information
+    /// Show user information
     DSPshow(2,"\tSpeed: %.1f Km/H\n"
               "\tInclination: %.1f %%\n"
               "\tDistance: %.1f M\n"
               "\tEmergency mode\n",
             myStruct.speed, myStruct.inc, myStruct.distance);
 
-    // Show user options
+    /// Show user options
     event_t nextevent;
     int navigation;
     navigation  = DCSsimulationSystemInputChar("\n"
@@ -366,7 +371,7 @@ void S_emergencyOnEntry(void)
     case 'O':
         printf("This is a Simulated error log, Reseting to Emergency");
         S_emergencyOnEntry();
-        // Other things here that are Emergency related
+        /// Other things here that are Emergency related
         break;
     default:
         DSPshow(1,"Invalid input!\nPlease try again!");
@@ -374,15 +379,16 @@ void S_emergencyOnEntry(void)
     }
 }
 
+/// Function for executing code when entering state S_PAUSE
 void S_pauseOnEntry(void)
 {
     showCurrentState();
 
-    // Initialize variables
+    /// Initialize variables
     event_t nextevent;
     int response;
 
-    // Show user information
+    /// Show user information
     DSPshow(2,"Treadmill paused.");
     response = DCSsimulationSystemInputChar("Press C to continue", "C");
 
@@ -401,10 +407,10 @@ void S_pauseOnEntry(void)
     }
 }
 
-// Subsystem (simulation) functions
+/// Subsystem (simulation) functions
 event_t InitialiseSubsystems(void)
 {
-    // state_t state;       // Deze moet misschien blijven staan? Comment Colin: exces function? look if time allows.
+    /// state_t state;       /// Deze moet misschien blijven staan? Comment Colin: exces function? look if time allows.
     DSPinitialise();
     DSPshowDisplay();
     KYBinitialise();
@@ -412,45 +418,45 @@ event_t InitialiseSubsystems(void)
     DSPshow(2,"System Initialized No errors");
 
     showCurrentState();
-    return(E_TREADMILL);        // Volgens mij moet dit E_INIT zijn, maar dan werkt het niet
+    return(E_TREADMILL);        /// Volgens mij moet dit E_INIT zijn, maar dan werkt het niet
 }
 
-// Event for transitioning from S_INIT to S_STANDBY
+/// Event for transitioning from S_INIT to S_STANDBY
 event_t	TREADMILL(void)
 {
-    // Startup phase here
+    /// Startup phase here
 
     showCurrentState();
     return (E_TREADMILL);
 }
 
-// Event function for transitioning from S_DEFAULT to S_DIAGNOSTICS
+/// Event function for transitioning from S_DEFAULT to S_DIAGNOSTICS
 event_t EF_DIAGNOSTICS_START(void)
 {
-    // Trigger diagnostic things here
-    // Set incline, speed and distance to zero.
+    /// Trigger diagnostic things here
+    /// Set incline, speed and distance to zero.
     saveStat();
 
     showCurrentState();
     return (E_DIAGNOSTICS_START);
 }
 
-// Event function for transitioning from S_DIAGNOSTICS to S_DEFAULT
+/// Event function for transitioning from S_DIAGNOSTICS to S_DEFAULT
 event_t EF_DIAGNOSTICS_STOP(void)
 {
-    // Stop diagnostics and go to default state
-    // restore default running configuration
+    /// Stop diagnostics and go to default state
+    /// restore default running configuration
     getStat();
 
     showCurrentState();
     return (E_DIAGNOSTICS_STOP);
 }
 
-// Event function for transitioning from S_STANDBY to S_DEFAULT
+/// Event function for transitioning from S_STANDBY to S_DEFAULT
 event_t EF_RUNNING_START(void)
 {
-    // Allows access to Variables in Struct Note:Use s1. before variable
-    // setting starting values
+    /// Allows access to Variables in Struct Note:Use s1. before variable
+    /// setting starting values
     myStruct.speed = 0.8;
     myStruct.inc = 0;
 
@@ -458,98 +464,98 @@ event_t EF_RUNNING_START(void)
     return (E_RUNNING_START);
 }
 
-// Event function for transitioning from S_DEFAULT to S_STANDBY
+/// Event function for transitioning from S_DEFAULT to S_STANDBY
 event_t EF_RUNNING_STOP(void)
 {
-    // stopping treadmill with this function
+    /// stopping treadmill with this function
     saveStat();
 
     showCurrentState();
     return (E_RUNNING_STOP);
 }
 
-// Event function for transitioning from S_DEFAULT to S_PAUSE
+/// Event function for transitioning from S_DEFAULT to S_PAUSE
 event_t EF_PAUSE(void)
 {    
-    // Set speed of treadmill to zero. Keep other options the same.
+    /// Set speed of treadmill to zero. Keep other options the same.
     saveStat();
 
     showCurrentState();
     return (E_PAUSE);
 }
 
-// Event function for transitioning from S_PAUSE to S_DEFAULT
+/// Event function for transitioning from S_PAUSE to S_DEFAULT
 event_t EF_RESUME(void)
 {
-    // Restore user configured speed here
+    /// Restore user configured speed here
     getStat();
 
     showCurrentState();
     return (E_RESUME);
 }
 
-// Event function for transitioning from S_DEFAULT to S_EMERGENCY
+/// Event function for transitioning from S_DEFAULT to S_EMERGENCY
 event_t EF_EMERGENCY_START(void)
 {
-    // Trigger alarms and emergency things here.
+    /// Trigger alarms and emergency things here.
     getStat();
 
     showCurrentState();
     return (E_EMERGENCY_START);
 }
 
-// Event function from transitioning from S_EMERGENCY to S_DEFAULT
+/// Event function from transitioning from S_EMERGENCY to S_DEFAULT
 event_t EF_EMERGENCY_STOP(void)
 {
-    // Reset emergency triggers here
-    // Stop alarm also here
+    /// Reset emergency triggers here
+    /// Stop alarm also here
     saveStat();
 
     showCurrentState();
     return (E_EMERGENCY_STOP);
 }
 
-// Function for transtitioning from state default to state alterConfig
+/// Function for transtitioning from state default to state alterConfig
 event_t EF_CONFIG_CHANGE(void)
 {
-    // Allow changes to happen to configuration
+    /// Allow changes to happen to configuration
     showCurrentState();
     return (E_CONFIG_CHANGE);
 }
 
-// Function for transitioning from state alterConfig to state default
+/// Function for transitioning from state alterConfig to state default
 event_t EF_CONFIG_DONE(void)
 {
-    // Commit changes to saved configuration HERE
+    /// Commit changes to saved configuration HERE
 
     showCurrentState();
     return (E_CONFIG_DONE);
 }
 
-// simulate delay in microseconds
+/// simulate delay in microseconds
 void delay_us(uint32_t d)
 {
     DCSdebugSystemInfo("Delay waiting for %d micro-seconds", d);
     sleep(10000);
 }
 
-// Function for showing the state to end user for debugging purposes.
+/// Function for showing the state to end user for debugging purposes.
 void showCurrentState(void)
 {
-    // initialize needed variable
+    /// initialize needed variable
     state_t state;
 
-    // fetch current state from FSM-framework
+    /// fetch current state from FSM-framework
     state = FSM_GetState();
 
-    // Show current state to user
+    /// Show current state to user
     DCSdebugSystemInfo("State: %s", stateEnumToText[state]);
 }
 
-// Function for keeping track of current stats
+/// Function for keeping track of current stats
 void saveStat(void)
 {
-    // Setting current vallue in Temp for later pull.
+    /// Setting current vallue in Temp for later pull.
     myStruct.tSpeed = myStruct.speed;
     myStruct.tInc = myStruct.inc;
 
@@ -557,10 +563,10 @@ void saveStat(void)
     myStruct.inc = 0;
 }
 
-// Function for returning saved stats
+/// Function for returning saved stats
 void getStat(void)
 {
-    // Pulling Vallues from Temps.
+    /// Pulling Vallues from Temps.
     myStruct.speed = myStruct.tSpeed;
     myStruct.inc = myStruct.tInc;
 
@@ -568,22 +574,22 @@ void getStat(void)
     myStruct.tInc = 0;
 }
 
-// Function for keeping track of distance
+/// Function for keeping track of distance
 void updateDis(void)
 {
     float TDistance;
-    // unfortionatly due to time constrains this function will not be impletemented
-    // my knowledge of keeping track of timers in C is limited and will take to long to learn/ implement in thi project. (Colin)
+    /// unfortionatly due to time constrains this function will not be impletemented
+    /// my knowledge of keeping track of timers in C is limited and will take to long to learn/ implement in thi project. (Colin)
 
 
     TDistance = elapsed_time * (myStruct.speed / 3.6);
     myStruct.distance = myStruct.distance + TDistance;
 }
 
-// Function to reset all stats
+/// Function to reset all stats
 void resetStat(void)
 {
-    // Allows access to Variables in Struct Note:Use Ptr -> before variable
+    /// Allows access to Variables in Struct Note:Use Ptr -> before variable
     myStruct.tSpeed = 0;
     myStruct.tInc = 0;
     myStruct.speed =0;
@@ -591,17 +597,19 @@ void resetStat(void)
     myStruct.distance =0;
 }
 
+/// Function for recording the start time
 void keepTimeStart(void)
 {
-    // Record the start time
+    /// Record the start time
     time(&start_time);
 }
 
+/// Function for recording stop time and measuring difference between start and stop time
 void keepTimeStop(void)
 {
-    // Record the end time
+    /// Record the end time
     time(&end_time);
 
-    // Calculate the elapsed time
+    /// Calculate the elapsed time
     elapsed_time = difftime(end_time, start_time);
 }

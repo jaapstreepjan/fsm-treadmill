@@ -2,21 +2,92 @@
 
 \mainpage Compile and execute the application
 
-\section sec1 How to compile
+\section sec1 How to open Qt project
+
+Use the default settings provided in the fsm-treadmill.pro file.
+\image html images/configure-project-qtcreator.png "Configure project in QtCreator" width=600px
+
+
+Delete the fsm-treadmill.pro.user file if it exists in the app folder.
+Also delete the "build-fsm-***_MinGW_64_bit-Debug" folder if it exists in the app folder.
+
+This project is also available on github:
+<a href="https://github.com/jjgroenendijk/fsm-treadmill">https://github.com/jjgroenendijk/fsm-treadmill</a> 
+
+Use this command to clone the repo:
+	git clone https://github.com/jjgroenendijk/fsm-treadmill.git
+
+\section sec2 How to compile
 
 The application is developed using QtCreator in a C project.
 
-Use the C11 compiler option in the CVM-1.pro file:
+Use the C11 compiler option in the fsm-treadmill.pro file:
 
 \verbatim CONFIG += c11 \endverbatim
+
+\verbatim 
+
+TEMPLATE = app
+CONFIG += console
+CONFIG -= app_bundle
+CONFIG -= qt
+CONFIG += c11
+
+SOURCES += \
+        console_functions/devConsole.c \
+        console_functions/display.c \
+        console_functions/keyboard.c \
+        console_functions/systemErrors.c \
+        events.c \
+        fsm_functions/fsm.c \
+        main.c \
+        states.c
+
+HEADERS += \
+   appInfo.h \
+   console_functions/devConsole.h \
+   console_functions/display.h \
+   console_functions/keyboard.h \
+   console_functions/systemErrors.h \
+   events.h \
+   fsm.h \
+   fsm_functions/fsm.h \
+   prototypes.h \
+   states.h \
+   variables.h
+
+\endverbatim
 
 Press the green button down left to the editor for compiling the code project.
 The button is shown with the red arrow.
 \image html images/compile-code.png "Compile button in QtCreator" width=600px
 
-\section sec2 User manual
+Make changes to the code as one does see fit.
+Most code magic is happening in main.c.
+Press CTRL+S to save the code changes.
 
-Start the application as follows: ...
+
+A short guide about how to save and push code when working with git:
+* Make sure you have a working and logged in git installation on your OS.
+* Check if the correct remote repository is configured: "Tools -> Git -> Remote repository -> Manage remotes".
+* Make sure to update local code: "Tools -> Git -> Remote repository -> Pull".
+* Make changes to the code as one does. Save code with CTRL+SHIFT+S.
+* Go to: "Tools -> Git -> Local repository -> Commit.
+* Mark the files you want to push to a repository. Write a single line about the changes made.
+* Push code online with: "Tools -> Git -> Remote repository -> Push"
+
+\image html images/git-pull-qtcreator.png "Pull code within Qt Creator" width=600px
+
+
+\section sec3 User manual
+
+Start the application as follows:
+* Open Qt Creator.
+* Open the given project.
+* Compile the code as shown previously.
+* Open the "app" folder.
+* Open the debug folder. This folder name starts with: "build-" and ends with "-Debug".
+* Open 
 
 \todo Write a complete user manual.
 
