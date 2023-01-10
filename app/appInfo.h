@@ -3,6 +3,6 @@
 
 
 #define APP "Treadmill"
-#define VERSION "0.2"
+#define VERSION "v1.1"
 // #define NOWAIT
 #endif

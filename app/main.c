@@ -295,7 +295,7 @@ void S_alterconfigOnEntry(void)
         S_alterconfigOnEntry();
         break;
     case 'I':
-        // chagne Incline here
+        // change Incline here
         printf("Enter a float value: ");
         fgets(input, sizeof(input), stdin); // get user input
 
@@ -306,7 +306,7 @@ void S_alterconfigOnEntry(void)
         S_alterconfigOnEntry();
         break;
     case 'D':
-        // chagne Incline here
+        // change Incline here
         printf("Enter a float value: ");
         fgets(input, sizeof(input), stdin); // get user input
 
@@ -435,7 +435,7 @@ event_t EF_DIAGNOSTICS_START(void)
     return (E_DIAGNOSTICS_START);
 }
 
-// Event functoin for transitioning from S_DIAGNOSTICS to S_DEFAULT
+// Event function for transitioning from S_DIAGNOSTICS to S_DEFAULT
 event_t EF_DIAGNOSTICS_STOP(void)
 {
     // Stop diagnostics and go to default state
@@ -449,7 +449,7 @@ event_t EF_DIAGNOSTICS_STOP(void)
 // Event function for transitioning from S_STANDBY to S_DEFAULT
 event_t EF_RUNNING_START(void)
 {
-    // Allows acces to Variables in Struct Note:Use s1. before variable
+    // Allows access to Variables in Struct Note:Use s1. before variable
     // setting starting values
     myStruct.speed = 0.8;
     myStruct.inc = 0;
@@ -572,18 +572,18 @@ void getStat(void)
 void updateDis(void)
 {
     float TDistance;
-    // unfortionatly duo to time constrains this function will not be impletemented
-    // my knowledge of keeping track of timers in C is limeted and will take to long to learn/ implement in thi project. (Colin)
+    // unfortionatly due to time constrains this function will not be impletemented
+    // my knowledge of keeping track of timers in C is limited and will take to long to learn/ implement in thi project. (Colin)
 
 
     TDistance = elapsed_time * (myStruct.speed / 3.6);
     myStruct.distance = myStruct.distance + TDistance;
 }
 
-// Function for Resetting all stats
+// Function to reset all stats
 void resetStat(void)
 {
-    // Allows acces to Variables in Struct Note:Use Ptr -> before variable
+    // Allows access to Variables in Struct Note:Use Ptr -> before variable
     myStruct.tSpeed = 0;
     myStruct.tInc = 0;
     myStruct.speed =0;
