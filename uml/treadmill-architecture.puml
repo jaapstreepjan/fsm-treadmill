@@ -1,0 +1,36 @@
+@startuml
+title Layered Architecture Treadmill\nC. van Dreumel\nJ.J. Groenendijk
+
+state "User Interface Layer" as UI {
+  state Screen
+  state Buttons
+}
+
+state "System Control Layer" as SCL {
+  state FSM
+}
+
+state "Subsystems Layer" as SL {
+  state "Band speed motor" as SL_BSM
+  state "Incline motor" as SL_IM
+  state "Emergency Brake" as SL_EB
+}
+
+state "Hardware Abstraction Layer" as HAL {
+  state "Hardware IO" as HWIO
+}
+
+FSM --> SL_BSM
+FSM --> SL_IM
+FSM --> SL_EB
+FSM --> Screen
+FSM --> Buttons
+
+SL_BSM --> HWIO
+SL_IM --> HWIO
+SL_EB --> HWIO
+
+Screen --> HWIO
+Buttons --> HWIO
+
+@enduml

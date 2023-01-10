@@ -11,6 +11,8 @@ Use the C11 compiler option in the CVM-1.pro file:
 \verbatim CONFIG += c11 \endverbatim
 
 Press the green button down left to the editor for compiling the code project.
+The button is shown with the red arrow.
+\image html images/compile-code.png "Compile button in QtCreator" width=600px
 
 \section sec2 User manual
 

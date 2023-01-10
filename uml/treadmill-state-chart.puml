@@ -1,0 +1,51 @@
+@startuml
+
+title Treadmill State Chart\nC. van Dreumel\nJ.J. Groenendijk
+
+[*] --> S_INIT : Turn on machine\nE_INIT
+
+S_INIT --> S_STANDBY : Start machine\nE_TREADMILL
+
+S_STANDBY --> S_DEFAULT : Start running\nE_RUNNING_START
+S_DEFAULT --> S_STANDBY : Stop running\nE_RUNNING_STOP
+
+S_STANDBY --> S_DIAGNOSTICS: Enter diagnostics\nE_DIAGNOSTICS_START
+S_DIAGNOSTICS--> S_STANDBY : Exit diagnostics\nE_DIAGNOSTICS_STOP
+
+S_DEFAULT --> S_ALTERCONFIG : Change tilt or speed\nE_CONFIG_CHANGE
+S_ALTERCONFIG --> S_DEFAULT : Change complete\nE_CONFIG_DONE
+S_DEFAULT --> S_EMERGENCY: Emergency sensor triggered\nE_EMERGENCY_START
+S_EMERGENCY--> S_DEFAULT : Alarm cleared\nE_EMERGENCY_STOP
+S_DEFAULT --> S_PAUSE : Pause button pressed\nE_PAUSE
+S_PAUSE --> S_DEFAULT : Resume button\nE_RESUME
+S_ALTERCONFIG --> S_EMERGENCY: Emergency sensor triggered\nE_EMERGENCY_START
+S_EMERGENCY--> S_ALTERCONFIG : Alarm cleared\nE_EMERGENCY_STOP
+
+
+S_INIT : Sensors and motors\nInitialize motors
+
+S_EMERGENCY: Triggered by emergency sensor
+S_EMERGENCY: Halt all motors
+S_EMERGENCY: Brakes applied
+S_EMERGENCY: Waiting for signal that emergency is over
+
+S_ALTERCONFIG : Alter speed or tilt of treadmill
+S_ALTERCONFIG : Block any further changes untill alteration is complete
+
+S_DEFAULT : Apply brake to degree of tilt
+S_DEFAULT : Apply constant power to speed motor
+S_DEFAULT : Changes to tilt and speed are allowed
+
+S_PAUSE : Apply brake to degree of tilt
+S_PAUSE : Treadmill speed is zero.
+S_PAUSE : Keep running session data in memory
+S_PAUSE : Wait for resume input
+
+S_STANDBY : Wait for user input
+S_STANDBY : Start speed 0.8 km/h
+S_STANDBY : Start tilt at 0%
+
+S_DIAGNOSTICS: Servicing mode
+S_DIAGNOSTICS: Allow part replacement without triggering alarms
+
+@enduml
