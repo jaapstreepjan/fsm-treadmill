@@ -62,10 +62,10 @@ event_t EF_EMERGENCY_STOP(void);
 event_t EF_CONFIG_CHANGE(void);
 event_t EF_CONFIG_DONE(void);
 
-/// Helper function example
+/// Helper function example. Currently not in use!
 void delay_us(uint32_t d);
 
-/// Main
+/// Main function where all the c code magic happens!
 int main(void)
 {
     /// sets all vallues to 0
@@ -183,6 +183,8 @@ void S_defaultOnEntry(void)
                                               "Press Q to stop running\n",
                                               "P" "C" "E" "Q");
 
+    /// Process the user response and transition to the next state
+    /// depending on user input.
     switch (navigation)
     {
     case 'P':
@@ -285,6 +287,8 @@ void S_alterconfigOnEntry(void)
     event_t nextevent;
     char input[10]; /// input buffer
 
+    /// Process the user response and transition to the next state
+    /// depending on user input.
     switch (navigation)
     {
     case 'S':
@@ -362,6 +366,8 @@ void S_emergencyOnEntry(void)
                                                "Press Q to Quit emergency\n",
                                                "Q" "O");
 
+    /// Process the user response and transition to the next state
+    /// depending on user input.
     switch (navigation)
     {
     case 'Q':
@@ -392,6 +398,8 @@ void S_pauseOnEntry(void)
     DSPshow(2,"Treadmill paused.");
     response = DCSsimulationSystemInputChar("Press C to continue", "C");
 
+    /// Process the user response and transition to the next state
+    /// depending on user input.
     switch (response)
     {
     case 'C':
@@ -505,10 +513,14 @@ event_t EF_EMERGENCY_START(void)
 }
 
 /// Event function from transitioning from S_EMERGENCY to S_DEFAULT
+/// We only want to burn calories, but when a real fire starts,
+/// an emergency should be triggered.
 event_t EF_EMERGENCY_STOP(void)
 {
     /// Reset emergency triggers here
     /// Stop alarm also here
+
+    /// Save running stats for continuing running after emergency.
     saveStat();
 
     showCurrentState();
@@ -518,7 +530,11 @@ event_t EF_EMERGENCY_STOP(void)
 /// Function for transtitioning from state default to state alterConfig
 event_t EF_CONFIG_CHANGE(void)
 {
-    /// Allow changes to happen to configuration
+    /// At the start of this project we guestimated that code for changing variables
+    /// would be here. Turns out this was not necessary.
+    /// This event functions stays in this code as it might be useful at a later date.
+
+    /// Show new state
     showCurrentState();
     return (E_CONFIG_CHANGE);
 }
@@ -526,13 +542,16 @@ event_t EF_CONFIG_CHANGE(void)
 /// Function for transitioning from state alterConfig to state default
 event_t EF_CONFIG_DONE(void)
 {
-    /// Commit changes to saved configuration HERE
+    /// At the start of this project we guestimated that code for saving variables
+    /// would be here. Turns out this was not necessary.
+    /// This event functions stays in this code as it might be useful at a later date.
 
     showCurrentState();
     return (E_CONFIG_DONE);
 }
 
 /// simulate delay in microseconds
+/// This function is currently not in use, but might be useful at a later date.
 void delay_us(uint32_t d)
 {
     DCSdebugSystemInfo("Delay waiting for %d micro-seconds", d);
@@ -577,12 +596,17 @@ void getStat(void)
 /// Function for keeping track of distance
 void updateDis(void)
 {
-    float TDistance;
     /// unfortionatly due to time constrains this function will not be impletemented
-    /// my knowledge of keeping track of timers in C is limited and will take to long to learn/ implement in thi project. (Colin)
+    /// my knowledge of keeping track of timers in C is limited and will take to long
+    /// to learn/ implement in thi project. (Colin)
 
+    /// Initialize a temporary float variable for calculating the distance.
+    float TDistance;
 
+    /// Calculate distance by dividing elapsed time with current speed.
     TDistance = elapsed_time * (myStruct.speed / 3.6);
+
+    /// Add the temporary distance calculation to the saved distance in struct myStruct.
     myStruct.distance = myStruct.distance + TDistance;
 }
 
