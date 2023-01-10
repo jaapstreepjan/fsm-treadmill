@@ -63,32 +63,46 @@ The button is shown with the red arrow.
 \image html images/compile-code.png "Compile button in QtCreator" width=600px
 
 Make changes to the code as one does see fit.
-Most code magic is happening in main.c.
-Press CTRL+S to save the code changes.
 
+Most code magic is happening in main.c.
+Press CTRL+SHIFT+S to save the code changes.
 
 A short guide about how to save and push code when working with git:
-* Make sure you have a working and logged in git installation on your OS.
-* Check if the correct remote repository is configured: "Tools -> Git -> Remote repository -> Manage remotes".
-* Make sure to update local code: "Tools -> Git -> Remote repository -> Pull".
-* Make changes to the code as one does. Save code with CTRL+SHIFT+S.
-* Go to: "Tools -> Git -> Local repository -> Commit.
-* Mark the files you want to push to a repository. Write a single line about the changes made.
-* Push code online with: "Tools -> Git -> Remote repository -> Push"
 
-\image html images/git-pull-qtcreator.png "Pull code within Qt Creator" width=600px
+- Make sure you have a working and logged in git installation on your OS.
+
+- Check if the correct remote repository is configured: "Tools -> Git -> Remote repository -> Manage remotes".
+
+- Make sure to update local code: "Tools -> Git -> Remote repository -> Pull".
+
+- Make changes to the code as one does. Save code with CTRL+SHIFT+S.
+
+- Go to: "Tools -> Git -> Local repository -> Commit".
+
+- Mark the files you want to push to a repository. Write a single line about the changes made.
+
+- Push code online with: "Tools -> Git -> Remote repository -> Push".
+
+
+Your code should now be updated in your repository.
+
+
+\image html "images/git-pull-qtcreator.png" "Pull code within Qt Creator" width=600px
 
 
 \section sec3 User manual
 
-Start the application as follows:
-* Open Qt Creator.
-* Open the given project.
-* Compile the code as shown previously.
-* Open the "app" folder.
-* Open the debug folder. This folder name starts with: "build-" and ends with "-Debug".
-* Open 
+A .exe binary is readily available for Windows users in the "bin" folder.
+For a freshly compiled binary follow these steps:
+- Open Qt Creator.
+- Open the given project.
+- Compile the code as shown previously.
+- Open the "fsm-treadmill" folder.
+- Open the debug folder. This folder name starts with: "build-" and ends with "-Debug".
+- Open fsm-treadmill.exe
 
-\todo Write a complete user manual.
+\todo Double check user manual.
+\todo Implement system error bits.
+\todo Fix doxygen syntax in documentation
 
 */
